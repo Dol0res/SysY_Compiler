@@ -4,9 +4,13 @@ CONST : 'const';
 
 INT : 'int';
 
+DOUBLE : 'double';
+
 VOID : 'void';
 
 IF : 'if';
+
+THEN : 'then';
 
 ELSE : 'else';
 
@@ -17,6 +21,8 @@ BREAK : 'break';
 CONTINUE : 'continue';
 
 RETURN : 'return';
+
+
 
 PLUS : '+';
 

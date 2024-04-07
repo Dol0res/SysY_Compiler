@@ -8,19 +8,23 @@ program
    : compUnit
    ;
 compUnit
-   : (funcDef | decl)+ EOF
+   : (functionDecl | varDecl)+ EOF
    ;
+varDecl : type IDENT ('=' exp)? ';' ;
 
-funcDef : IDENT '(' arg ')' ;
+type : INT | DOUBLE | VOID ;
 
-decl : 'int' IDENT optional_init ';' ;
+functionDecl : type IDENT '(' funcRParams? ')' block ;
 
-arg : 'int' IDENT optional_init ;
+block : '{' stat* '}' ;
 
-optional_init
-    : '=' IDENT    # Init
-    |           # NoInit
-    ;
+stat : block    # BlockStat
+     | varDecl  # VarDeclStat
+     | 'if' exp 'then' stat ('else' stat)? # IfStat
+     | 'return' exp? ';'   # ReturnStat
+     | exp '=' exp ';'    # AssignStat
+     | exp ';' # ExprStat
+     ;
 
 exp
    : L_PAREN exp R_PAREN
