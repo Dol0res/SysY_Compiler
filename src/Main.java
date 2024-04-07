@@ -21,7 +21,9 @@ public class Main
         sysYLexer.removeErrorListeners();
         ErrorListener myErrorListener = new ErrorListener();
         sysYLexer.addErrorListener(myErrorListener);
-        List<? extends Token> myTokens = sysYLexer.getAllTokens();
+        CommonTokenStream tokens = new CommonTokenStream(sysYLexer);
+        SysYParser sysYParser = new SysYParser(tokens);
+
 
         if (myErrorListener.hasErrorInformation) {
             // 假设myErrorListener有一个错误信息输出函数printLexerErrorInformation.
