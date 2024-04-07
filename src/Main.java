@@ -1,5 +1,8 @@
 import org.antlr.v4.*;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.RuleNode;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -24,15 +27,20 @@ public class Main
         CommonTokenStream tokens = new CommonTokenStream(sysYLexer);
         SysYParser sysYParser = new SysYParser(tokens);
 
+        ParseTree tree = sysYParser.program();
+        //Visitor extends SysYParserBaseVisitor<Void>
+        Visitor visitor = new Visitor();
+        visitor.visit(tree);
 
-        if (myErrorListener.hasErrorInformation) {
-            // 假设myErrorListener有一个错误信息输出函数printLexerErrorInformation.
-            myErrorListener.printLexerErrorInformation();
-        } else {
-            for (Token t : myTokens) {
-                printSysYTokenInformation(t);
-            }
-        }
+
+//        if (myErrorListener.hasErrorInformation) {
+//            // 假设myErrorListener有一个错误信息输出函数printLexerErrorInformation.
+//            myErrorListener.printLexerErrorInformation();
+//        } else {
+//            for (Token t : tokens) {
+//                printSysYTokenInformation(t);
+//            }
+//        }
 
     }
 
@@ -75,5 +83,27 @@ class ErrorListener extends BaseErrorListener {
         for(int i =0;i<lineNo.size();i++) {
             System.err.println("Error type A at Line " + lineNo.get(i) + ": Wrong .");
         }
+    }
+}
+
+class Visitor extends SysYParserBaseVisitor<Void>{
+    @Override
+    public Void visit(ParseTree tree) {
+        return super.visit(tree);
+    }
+
+    @Override
+    public Void visitExp(SysYParser.ExpContext ctx) {
+        return super.visitExp(ctx);
+    }
+
+    @Override
+    public Void visitTerminal(TerminalNode node) {
+        return super.visitTerminal(node);
+    }
+
+    @Override
+    public Void visitChildren(RuleNode node) {
+        return super.visitChildren(node);
     }
 }
