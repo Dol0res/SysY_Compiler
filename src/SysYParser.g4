@@ -1,5 +1,27 @@
 parser grammar SysYParser;
 
+options {
+    tokenVocab = SysYLexer;//注意使用该语句指定词法分析器；请不要修改词法分析器或语法分析器的文件名，否则Makefile可能无法正常工作，影响评测结果
+}
+
+program
+   : compUnit
+   ;
+compUnit
+   : (funcDef | decl)+ EOF
+   ;
+
+funcDef : IDENT '(' arg ')' ;
+
+decl : 'int' IDENT optional_init ';' ;
+
+arg : 'int' IDENT optional_init ;
+
+optional_init
+    : '=' IDENT    # Init
+    |           # NoInit
+    ;
+
 exp
    : L_PAREN exp R_PAREN
    | lVal
