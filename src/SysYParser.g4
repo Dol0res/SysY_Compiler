@@ -20,7 +20,7 @@ block : '{' stat* '}' ;
 
 stat : block    # BlockStat
      | varDecl  # VarDeclStat
-     | 'if' cond 'then' stat ('else' stat)? # IfStat
+     | 'if' cond ('then' stat ('else' stat)? )? # IfStat
      | 'return' exp? ';'   # ReturnStat
      | 'while' cond? stat    #WhileStat
      | exp '=' exp ';'    # AssignStat
@@ -31,7 +31,7 @@ exp
    : L_PAREN exp R_PAREN
    | lVal
    | number
-   | IDENT L_PAREN funcRParams? R_PAREN
+   | IDENT L_PAREN funcRParamsCall? R_PAREN
    | unaryOp exp
    | exp (MUL | DIV | MOD) exp
    | exp (PLUS | MINUS) exp
