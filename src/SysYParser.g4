@@ -10,7 +10,7 @@ program
 compUnit
    : (functionDecl | varDecl)+ EOF
    ;
-varDecl : type IDENT ('=' exp)? ';' ;
+varDecl : type IDENT ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
 
 type : INT | DOUBLE | VOID ;
 
@@ -22,6 +22,7 @@ stat : block    # BlockStat
      | varDecl  # VarDeclStat
      | 'if' exp 'then' stat ('else' stat)? # IfStat
      | 'return' exp? ';'   # ReturnStat
+     | 'while' exp? stat    #WhileStat
      | exp '=' exp ';'    # AssignStat
      | exp ';' # ExprStat
      ;
@@ -63,7 +64,7 @@ funcRParams
    ;
 
 param
-   : exp
+   : type IDENT
    ;
 
 constExp
