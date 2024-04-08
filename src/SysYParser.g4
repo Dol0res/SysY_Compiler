@@ -39,6 +39,7 @@ exp
 
 loop
     :'if' cond ('then' stat ('else' stat)? )?
+    | 'while' cond? block
     | 'while' cond? stat
     ;
 

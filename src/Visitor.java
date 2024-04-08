@@ -92,17 +92,22 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         output.append(CharacterHighlighter.getColor(node));
         String ruleName = getRuleName(node);
         String ruleNameP ="";
-        if(node.getParent()!=null)ruleNameP = getRuleName((RuleNode) node.getParent());
+        int childNum=0;
+        if(node.getParent()!=null){
+            ruleNameP = getRuleName((RuleNode) node.getParent());
+            childNum=node.getParent().getChildCount();
+        }
 
         if(ruleName.equals("block")) {
-            if(ruleNameP.equals("functionDecl")) {
+            if(ruleNameP.equals("functionDecl") || ruleNameP.equals("loop")) {
                 output.append(" ");
+                outputWithoutColor.append(" ");
             }else{
                 output.append("\n");
+                outputWithoutColor.append("\n");
             }
         }
         if(ruleNameP.equals("block")){
-            int childNum=node.getParent().getChildCount();
             if( childNum>1&&node.getParent().getChild(1)==node) {
                 output.append("\n");
                 tab++;
@@ -111,6 +116,9 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             if( childNum>1 && node.getParent().getChild(childNum-2)==node) {
                 tab--;
             }
+        }
+        if(ruleNameP.equals("loop")){
+            output.append(" ");
         }
 
         super.visitChildren(node);
