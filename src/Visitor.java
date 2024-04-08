@@ -59,8 +59,13 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                 hasSpace = true;
                 if(code.equals("return") && node.getParent().getChild(node.getParent().getChildCount()-2).equals("return"))hasSpace=false;
             } else if ((code.equals("-") || code.equals("+")) && !getRuleName((RuleNode) node.getParent()).equals("unaryOp")) {
+                if (!hasSpace){
+                    output.append(" ");
+                }
                 hasSpace = true;
-            }else{
+            } else if (code.equals(",")) {
+                hasSpace=true;
+            } else{
                 hasSpace = false;
             }
 
