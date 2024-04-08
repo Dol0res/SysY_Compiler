@@ -15,7 +15,7 @@ varDecl : type IDENT ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
 type : INT | DOUBLE | VOID ;
 
 functionDecl : type IDENT '(' funcRParams? ')' block ;
-
+funcCall: IDENT '(' funcRParams? ')';
 block : '{' stat* '}' ;
 
 stat : block    # BlockStat
@@ -35,6 +35,7 @@ exp
    | unaryOp exp
    | exp (MUL | DIV | MOD) exp
    | exp (PLUS | MINUS) exp
+   | funcCall
    ;
 
 cond
@@ -66,6 +67,10 @@ funcRParams
 param
    : type IDENT
    ;
+funcRParamsCall
+   : exp (COMMA exp)*
+   ;
+
 
 constExp
    : exp
