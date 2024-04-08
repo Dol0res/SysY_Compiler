@@ -20,9 +20,9 @@ block : '{' stat* '}' ;
 
 stat : block    # BlockStat
      | varDecl  # VarDeclStat
-     | 'if' exp 'then' stat ('else' stat)? # IfStat
+     | 'if' cond 'then' stat ('else' stat)? # IfStat
      | 'return' exp? ';'   # ReturnStat
-     | 'while' exp? stat    #WhileStat
+     | 'while' cond? stat    #WhileStat
      | exp '=' exp ';'    # AssignStat
      | exp ';' # ExprStat
      ;
