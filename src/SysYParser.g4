@@ -44,6 +44,7 @@ cond
    | cond (EQ | NEQ) cond
    | cond AND cond
    | cond OR cond
+   | L_PAREN cond R_PAREN
    ;
 
 lVal
