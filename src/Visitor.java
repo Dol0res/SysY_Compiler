@@ -13,6 +13,8 @@ class Visitor extends SysYParserBaseVisitor<Void> {
     StringBuilder outputWithoutColor = new StringBuilder();
     static boolean underline = false;
     static boolean hasSpace = false;
+    static boolean changeLine = false;
+
     static int tab = 0;
     String[] spaceBehind = new String[]{"const","int","void","if","else","while","return"};
     String[] spaceAround = new String[]{"*","/","%","=","==","!=","<",">","<=",">=","&&","||"};
@@ -29,9 +31,14 @@ class Visitor extends SysYParserBaseVisitor<Void> {
     public Void visit(ParseTree tree) {
 
         super.visit(tree);
-
-        //System.out.println(RainbowBrackets.colorizeBrackets(output.toString()));
-        System.out.println(output.toString());
+//        int l=outputWithoutColor.length();
+//        while(l>2&&outputWithoutColor.charAt(l-1)!='\n' && outputWithoutColor.charAt(l-2)!='\n' ) {
+//            System.out.print(output.substring(0, output.length()-1));
+//        }
+//        //System.out.println(RainbowBrackets.colorizeBrackets(output.toString()));
+//        else{
+            System.out.print(output.toString());
+//        }
         System.out.println(outputWithoutColor.toString());
         return null;
     }
@@ -50,6 +57,20 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 //                if(ruleName.equals("")) {}
 //            }
             String code = node.getSymbol().getText();
+            String ruleNameP ="";
+            int childNum=0;
+            if(node.getParent()!=null){
+                ruleNameP = getRuleName((RuleNode) node.getParent());
+                childNum=node.getParent().getChildCount();
+            }
+            if(code.equals("}") ){
+                output.append("\n");
+                outputWithoutColor.append("\n");
+                changeLine=true;
+                if(ruleNameP.equals("block")){
+                    output.append("    ".repeat(Math.max(0, tab)));
+                }
+            }
             if(spaceAroundList.contains(code)) {
                 if (!hasSpace){
                     output.append(" ");
@@ -72,6 +93,8 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 
 
             output.append(CharacterHighlighter.getTerminalColor(node));
+            super.visitTerminal(node);
+
             if(underline) {
                 output.append("\u001B[4m");
             }
@@ -83,15 +106,26 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             if(hasSpace)outputWithoutColor.append(" ");
 
         }
-        return super.visitTerminal(node);
+        return null;
+    }
+
+    @Override
+    public Void visitFunctionDecl(SysYParser.FunctionDeclContext ctx) {
+        super.visitFunctionDecl(ctx);
+        if(ctx.stop.getType()!=-1)output.append("\n");
+        return null;
     }
 
     @Override
     public Void visitChildren(RuleNode node) {
+        if(changeLine){
+            output.append("\n");
+            outputWithoutColor.append("\n");
+        }
+        changeLine=false;
 
         // 打印当前节点的文本表示
         // 继续访问子节点
-        output.append(CharacterHighlighter.getColor(node));
         String ruleName = getRuleName(node);
         String ruleNameP ="";
         int childNum=0;
@@ -123,16 +157,23 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             }
         }
 
-
+        output.append(CharacterHighlighter.getColor(node));
         super.visitChildren(node);
 
 
         if(ruleName.equals("varDecl")) underline = false;
         output.append("\u001B[0m");
-        if(ruleName.equals("stat") ) {
-            output.append("\n");
-            outputWithoutColor.append("\n");
-        }
+//        if(outputWithoutColor.charAt(outputWithoutColor.length()-1)!='\n') {
+            if (ruleName.equals("stat")) {
+                changeLine=true;
+
+            }
+            if (ruleName.equals("block")) {
+                changeLine=true;
+
+
+            }
+//        }
 
         return null;
     }

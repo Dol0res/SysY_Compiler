@@ -35,10 +35,10 @@ exp
    | lVal
    | number
    | IDENT L_PAREN funcRParamsCall? R_PAREN
+   | funcCall
    | unaryOp exp
    | exp (MUL | DIV | MOD) exp
    | exp (PLUS | MINUS) exp
-   | funcCall
    ;
 
 
