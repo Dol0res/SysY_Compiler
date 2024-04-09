@@ -5,7 +5,11 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.*;
 
 class CharacterHighlighter {
-
+    public static String getRuleName(RuleNode node){
+        RuleContext ruleContext = node.getRuleContext();
+        int ruleIndex = ruleContext.getRuleIndex();
+        return SysYParser.ruleNames[ruleIndex];
+    }
     public static String getTerminalColor(TerminalNode node) {
         String code = node.getText();
         String[] cyanKeywords = {"const", "int", "void", "if", "else", "while", "break", "continue", "return"};
@@ -37,19 +41,19 @@ class CharacterHighlighter {
     }
 
     public static String getColor(RuleNode node) {
-        RuleContext ruleContext = node.getRuleContext();
-        int ruleIndex = ruleContext.getRuleIndex();
-        String ruleName = SysYParser.ruleNames[ruleIndex];
+        String ruleName = getRuleName(node);
         switch (ruleName) {
             case "number":
                 return "\u001B[35m";
             case "stat":
+                if(!(node.getChildCount()==1 && getRuleName((RuleNode) node.getChild(0)).equals("block") )) return "\u001B[97m";
                 return "\u001B[0m";
             case "varDecl":
                 Visitor.underline=true;
                 return "\u001B[95m";
+
         }
-        return "";
+        return "\u001B[0m";
     }
 
     private static final String[] COLORS = {

@@ -95,6 +95,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                 output.append("\u001B[4m");
                 output.append("\u001B[95m");
             }
+
             //core
             output.append(CharacterHighlighter.getTerminalColor(node));
             super.visitTerminal(node);
