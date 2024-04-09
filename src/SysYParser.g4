@@ -11,6 +11,7 @@ compUnit
    : (functionDecl | varDecl)+ EOF
    ;
 varDecl : 'const'? type IDENT ('[' exp ']')? ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
+constDecl : 'const' varDecl;
 
 type : INT | DOUBLE | VOID ;
 
@@ -21,6 +22,7 @@ array : '{' params '}';
 
 stat : block    # BlockStat
      | varDecl  # VarDeclStat
+     | constDecl #Const
      |functionDecl #Function
      | 'return' exp? ';'   # ReturnStat
      | 'if' '(' cond ')' stat ('else' stat )? #If
