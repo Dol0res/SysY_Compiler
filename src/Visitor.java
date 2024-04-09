@@ -63,11 +63,12 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                 ruleNameP = getRuleName((RuleNode) node.getParent());
                 childNum=node.getParent().getChildCount();
             }
-            if(code.equals("}") ){
+            if(code.equals("}") && !ruleNameP.equals("array")){
                 output.append("\n");
                 outputWithoutColor.append("\n");
                 changeLine=true;
                 if(ruleNameP.equals("block")){
+                    tab--;
                     output.append("    ".repeat(Math.max(0, tab)));
                 }
             }
@@ -123,11 +124,10 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         if(changeLine){
             output.append("\n");
             outputWithoutColor.append("\n");
+            output.append("    ".repeat(Math.max(0, tab)));
         }
-        changeLine=false;
 
-        // 打印当前节点的文本表示
-        // 继续访问子节点
+
         String ruleName = getRuleName(node);
         String ruleNameP ="";
         int childNum=0;
@@ -135,35 +135,39 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             ruleNameP = getRuleName((RuleNode) node.getParent());
             childNum=node.getParent().getChildCount();
         }
-
         if(ruleName.equals("block")) {
+            tab++;
 //            if(ruleNameP.equals("functionDecl") || ruleNameP.equals("loop")) {
-                if(!hasSpace) {
-                    output.append(" ");
-                    outputWithoutColor.append(" ");
-                }
+            if(!hasSpace && !changeLine) {
+                output.append(" ");
+                outputWithoutColor.append(" ");
+            }
 //            }else{
 //                output.append("\n");
 //                outputWithoutColor.append("\n");
 //            }
             hasSpace=false;
         }
+        changeLine=false;
+
+
         if(ruleNameP.equals("block")){
             if( childNum>1&&node.getParent().getChild(1)==node) {
-                output.append("\n");
-                tab++;
+                changeLine=true;
             }
-            output.append("    ".repeat(Math.max(0, tab)));
-            if( childNum>1 && node.getParent().getChild(childNum-2)==node) {
-                tab--;
-            }
+//            if( childNum>1 && node.getParent().getChild(childNum-2)==node) {
+//                tab--;
+//            }
         }
 
         output.append(CharacterHighlighter.getColor(node));
         super.visitChildren(node);
 
+        if(ruleName.equals("varDecl")) {
+            underline = false;
+            changeLine=true;
 
-        if(ruleName.equals("varDecl")) underline = false;
+        }
         output.append("\u001B[0m");
 //        if(outputWithoutColor.charAt(outputWithoutColor.length()-1)!='\n') {
             if (ruleName.equals("stat")) {
