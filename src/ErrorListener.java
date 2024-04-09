@@ -25,7 +25,7 @@ class ErrorListener extends BaseErrorListener {
         if(!hasErrorInformation)return;
         //int lineNo = this.
         for(int i =0;i<lineNo.size();i++) {
-            System.err.println("Error type B at Line " + lineNo.get(i) + ": Wrong .");
+            System.out.println("Error type B at Line " + lineNo.get(i) + ": Wrong .");
         }
     }
 }

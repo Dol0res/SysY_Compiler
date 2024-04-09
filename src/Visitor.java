@@ -14,6 +14,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
     static boolean underline = false;
     static boolean hasSpace = false;
     static boolean changeLine = false;
+    static boolean stat = false;
 
     static int tab = 0;
     String[] spaceBehind = new String[]{"const","int","void","if","else","while","return"};
@@ -94,6 +95,8 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             if(underline) {
                 output.append("\u001B[4m");
                 output.append("\u001B[95m");
+            } else if (stat) {
+                output.append("\u001B[97m");
             }
 
             //core
@@ -179,6 +182,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 //        if(outputWithoutColor.charAt(outputWithoutColor.length()-1)!='\n') {
             if (ruleName.equals("stat")) {
                 changeLine=true;
+                stat=false;
             }
 //            if (ruleName.equals("block")) {
 //                changeLine=true;

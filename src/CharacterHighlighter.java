@@ -46,7 +46,10 @@ class CharacterHighlighter {
             case "number":
                 return "\u001B[35m";
             case "stat":
-                if(!(node.getChildCount()==1 && getRuleName((RuleNode) node.getChild(0)).equals("block") )) return "\u001B[97m";
+                if(!(node.getChildCount()==1 && getRuleName((RuleNode) node.getChild(0)).equals("block") )){
+                    Visitor.stat=true;
+                    return "\u001B[97m";
+                }
                 return "\u001B[0m";
             case "varDecl":
                 Visitor.underline=true;
