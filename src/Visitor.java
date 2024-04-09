@@ -101,15 +101,15 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         }
 
         if(ruleName.equals("block")) {
-            if(ruleNameP.equals("functionDecl") || ruleNameP.equals("loop")) {
+//            if(ruleNameP.equals("functionDecl") || ruleNameP.equals("loop")) {
                 if(!hasSpace) {
                     output.append(" ");
                     outputWithoutColor.append(" ");
                 }
-            }else{
-                output.append("\n");
-                outputWithoutColor.append("\n");
-            }
+//            }else{
+//                output.append("\n");
+//                outputWithoutColor.append("\n");
+//            }
             hasSpace=false;
         }
         if(ruleNameP.equals("block")){
@@ -133,10 +133,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             output.append("\n");
             outputWithoutColor.append("\n");
         }
-        if(ruleName.equals("block")) {
-            output.append("\n");
 
-        }
         return null;
     }
 

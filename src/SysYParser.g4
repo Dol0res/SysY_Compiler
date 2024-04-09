@@ -20,6 +20,7 @@ block : '{' stat* '}' ;
 
 stat : block    # BlockStat
      | varDecl  # VarDeclStat
+     |functionDecl #Function
      | 'return' exp? ';'   # ReturnStat
      | 'if' '(' cond ')' stat ('else' stat )? #If
      | 'if' '(' cond ')' 'then' stat ('else' stat )? #If
