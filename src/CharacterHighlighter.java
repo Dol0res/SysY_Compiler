@@ -16,7 +16,8 @@ class CharacterHighlighter {
             return "\u001B[96m";
         } else if (redKeywordsList.contains(code)) {
             return "\u001B[91m";
-        }
+        } 
+
         String tokenName = SysYLexer.VOCABULARY.getSymbolicName(node.getSymbol().getType());
         if (tokenName.equals("IDENT")) {
             RuleContext ruleContext = ((RuleNode) node.getParent()).getRuleContext();
@@ -27,6 +28,8 @@ class CharacterHighlighter {
             }
         } else if (tokenName.equals("L_PAREN") | tokenName.equals("R_PAREN") | tokenName.equals("L_BRACE") | tokenName.equals("R_BRACE") | tokenName.equals("L_BRACKT") | tokenName.equals("R_BRACKT")) {
             return colorizeBrackets(code);
+        } else if (tokenName.equals("INTEGER_CONST")) {
+            return "\u001B[35m";
         }
 
 

@@ -91,13 +91,15 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                 hasSpace = false;
             }
 
+            if(underline) {
+                output.append("\u001B[4m");
+                output.append("\u001B[95m");
+            }
 
             output.append(CharacterHighlighter.getTerminalColor(node));
             super.visitTerminal(node);
 
-            if(underline) {
-                output.append("\u001B[4m");
-            }
+
             output.append(node.getSymbol().getText());
             outputWithoutColor.append(node.getSymbol().getText());
             output.append("\u001B[0m");

@@ -10,16 +10,19 @@ program
 compUnit
    : (functionDecl | varDecl)+ EOF
    ;
-varDecl : type IDENT ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
+varDecl : type IDENT ('[' exp ']')? ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
+constDecl : 'const' varDecl;
 
 type : INT | DOUBLE | VOID ;
 
 functionDecl : type IDENT '(' funcRParams? ')' block ;
-funcCall: IDENT '(' funcRParamsCall? ')';
+funcCall: IDENT '(' funcRParams? ')';
 block : '{' stat* '}' ;
+array : '{' params '}';
 
 stat : block    # BlockStat
      | varDecl  # VarDeclStat
+     | constDecl #Const
      |functionDecl #Function
      | 'return' exp? ';'   # ReturnStat
      | 'if' '(' cond ')' stat ('else' stat )? #If
@@ -38,6 +41,7 @@ exp
    | unaryOp exp
    | exp (MUL | DIV | MOD) exp
    | exp (PLUS | MINUS) exp
+   | array
    ;
 
 
@@ -65,13 +69,14 @@ unaryOp
    ;
 
 funcRParams
-   : param (COMMA param)*
+   : funcParam (COMMA funcParam)*
    ;
 
-param
+funcParam
    : type IDENT
    ;
-funcRParamsCall
+
+params
    : exp (COMMA exp)*
    ;
 
