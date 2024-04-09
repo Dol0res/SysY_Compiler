@@ -26,7 +26,6 @@ stat : block    # BlockStat
      | 'if' '(' cond ')' stat ('else' stat )? #If
      | 'if' '(' cond ')' 'then' stat ('else' stat )? #If
      | 'while' '(' cond ')' stat #While
-     | 'print' '(' exp ')' #Print
      | exp '=' exp ';'    # AssignStat
      | exp ';' # ExprStat
 
