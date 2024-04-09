@@ -34,7 +34,6 @@ exp
    : L_PAREN exp R_PAREN
    | lVal
    | number
-   | IDENT L_PAREN funcRParamsCall? R_PAREN
    | funcCall
    | unaryOp exp
    | exp (MUL | DIV | MOD) exp
