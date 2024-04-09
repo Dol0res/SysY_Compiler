@@ -165,12 +165,13 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             if(head.equals("if")|| head.equals("while")){
                 if(node.getChild(0).getText().charAt(0)=='{'){
                     output.append(" ");
-                } else if (node.getChild(0).getText().equals("if")) {
+                } else if (node.getChild(0).getText().equals("if") && node.getParent().getChild(node.getParent().getChildCount()-2).getText().equals("else")) {
                     //output.append(" ");
                 } else {
                     output.append("\n");
                     hasSpace=false;
-                    output.append("    ".repeat(Math.max(0, tab+1)));
+                    tab++;
+                    output.append("    ".repeat(Math.max(0, tab)));
                 }
             }
 
@@ -188,6 +189,18 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         }
 
         output.append("\u001B[0m");
+        if(ruleName.equals("stat") &&ruleNameP.equals("stat")) {
+            String head =node.getParent().getChild(0).getText();
+            if(head.equals("if")|| head.equals("while")){
+                if(node.getChild(0).getText().charAt(0)=='{'){
+                } else if (node.getChild(0).getText().equals("if") && node.getParent().getChild(node.getParent().getChildCount()-2).getText().equals("else")) {
+                    //output.append(" ");
+                } else {
+                    tab--;
+                }
+            }
+
+        }
 //        if(outputWithoutColor.charAt(outputWithoutColor.length()-1)!='\n') {
             if (ruleName.equals("stat")) {
                 changeLine=true;
