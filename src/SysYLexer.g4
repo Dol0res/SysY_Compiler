@@ -70,8 +70,7 @@ SEMICOLON : ';';
 IDENT   : ('_' | LETTER) ('_'|NUMBER|LETTER)* ;
 INTEGER_CONST : '0'
                 | [1-9]NUMBER*
-                | ('0x'|'0X') (NUMBER | [A-Fa-f])+
-                | '0' [0-7]+;
+;
 
 WS: [ \r\n\t]+
    ->skip;
