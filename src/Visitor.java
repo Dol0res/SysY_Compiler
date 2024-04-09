@@ -169,6 +169,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                     //output.append(" ");
                 } else {
                     output.append("\n");
+                    hasSpace=false;
                     output.append("    ".repeat(Math.max(0, tab+1)));
                 }
             }
