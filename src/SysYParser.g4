@@ -23,7 +23,6 @@ stat : block    # BlockStat
      | varDecl  # VarDeclStat
      | 'return' exp? ';'   # ReturnStat
      | 'if' '(' cond ')' stat ('else' stat )? #If
-     | 'if' '(' cond ')' 'then' stat ('else' stat )? #If
      | 'while' '(' cond ')' stat #While
      | exp '=' exp ';'    # AssignStat
      | exp ';' # ExprStat

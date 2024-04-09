@@ -168,12 +168,9 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 //        if(outputWithoutColor.charAt(outputWithoutColor.length()-1)!='\n') {
             if (ruleName.equals("stat")) {
                 changeLine=true;
-
             }
             if (ruleName.equals("block")) {
                 changeLine=true;
-
-
             }
 //        }
 
