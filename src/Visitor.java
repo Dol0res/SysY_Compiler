@@ -114,12 +114,12 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         return null;
     }
 
-    @Override
-    public Void visitFunctionDecl(SysYParser.FunctionDeclContext ctx) {
-        super.visitFunctionDecl(ctx);
-        if(ctx.stop.getType()!=-1)output.append("\n");
-        return null;
-    }
+//    @Override
+//    public Void visitFunctionDecl(SysYParser.FunctionDeclContext ctx) {
+//        super.visitFunctionDecl(ctx);
+//        if(ctx.stop.getType()!=-1)output.append("\n");
+//        return null;
+//    }
 
 
     @Override
