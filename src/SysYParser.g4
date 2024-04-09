@@ -19,10 +19,10 @@ funcCall: IDENT '(' params? ')';
 block : '{' stat* '}' ;
 array : '{' params '}';
 
-stat : varDecl  # VarDeclStat
-     |exp '=' exp ';'    # AssignStat
+stat : block    # BlockStat
+     | exp '=' exp ';'    # AssignStat
      | exp ';' # ExprStat
-     | block    # BlockStat
+     | varDecl  # VarDeclStat
      | 'return' exp? ';'   # ReturnStat
      | 'if' '(' cond ')' stat ('else' stat )? #If
      | 'while' '(' cond ')' stat #While
