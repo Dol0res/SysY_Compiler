@@ -63,9 +63,14 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                 ruleNameP = getRuleName((RuleNode) node.getParent());
                 childNum=node.getParent().getChildCount();
             }
-            if(code.equals("}") && !ruleNameP.equals("array")){
+            if(changeLine){
                 output.append("\n");
                 outputWithoutColor.append("\n");
+                output.append("    ".repeat(Math.max(0, tab)));
+                outputWithoutColor.append("    ".repeat(Math.max(0, tab)));
+                changeLine=false;
+            }
+            if(code.equals("}") && !ruleNameP.equals("array")){
                 changeLine=true;
                 if(ruleNameP.equals("block")){
                     tab--;
@@ -96,7 +101,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                 output.append("\u001B[4m");
                 output.append("\u001B[95m");
             }
-
+            //core
             output.append(CharacterHighlighter.getTerminalColor(node));
             super.visitTerminal(node);
 
@@ -121,10 +126,12 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 
     @Override
     public Void visitChildren(RuleNode node) {
-        if(changeLine){
+        if(changeLine && outputWithoutColor.charAt(outputWithoutColor.length()-1)!=' '){
             output.append("\n");
             outputWithoutColor.append("\n");
             output.append("    ".repeat(Math.max(0, tab)));
+            outputWithoutColor.append("    ".repeat(Math.max(0, tab)));
+            changeLine=false;
         }
 
 
@@ -138,28 +145,16 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         if(ruleName.equals("block")) {
             tab++;
 //            if(ruleNameP.equals("functionDecl") || ruleNameP.equals("loop")) {
-            if(!hasSpace && !changeLine) {
+            if(ruleNameP.equals("functionDecl")) {
                 output.append(" ");
                 outputWithoutColor.append(" ");
-            }
-//            }else{
-//                output.append("\n");
-//                outputWithoutColor.append("\n");
-//            }
-            hasSpace=false;
-        }
-        changeLine=false;
-
-
-        if(ruleNameP.equals("block")){
-            if( childNum>1&&node.getParent().getChild(1)==node) {
+            }else{
                 changeLine=true;
             }
-//            if( childNum>1 && node.getParent().getChild(childNum-2)==node) {
-//                tab--;
-//            }
+            hasSpace=false;
         }
 
+        //core
         output.append(CharacterHighlighter.getColor(node));
         super.visitChildren(node);
 
