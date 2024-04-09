@@ -10,7 +10,7 @@ program
 compUnit
    : (functionDecl | varDecl)+ EOF
    ;
-varDecl : 'const'? type IDENT ('[' exp ']')? ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
+varDecl : 'const'? type lVal ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
 
 type : INT | DOUBLE | VOID ;
 
@@ -21,7 +21,6 @@ array : '{' params '}';
 
 stat : block    # BlockStat
      | varDecl  # VarDeclStat
-     |functionDecl #Function
      | 'return' exp? ';'   # ReturnStat
      | 'if' '(' cond ')' stat ('else' stat )? #If
      | 'if' '(' cond ')' 'then' stat ('else' stat )? #If
@@ -33,9 +32,9 @@ stat : block    # BlockStat
 
 exp
    : L_PAREN exp R_PAREN
+   | funcCall
    | lVal
    | number
-   | funcCall
    | unaryOp exp
    | exp (MUL | DIV | MOD) exp
    | exp (PLUS | MINUS) exp
