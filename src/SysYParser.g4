@@ -15,7 +15,7 @@ varDecl : 'const'? type lVal ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
 type : INT | DOUBLE | VOID ;
 
 functionDecl : type IDENT '(' funcRParams? ')' block ;
-funcCall: IDENT '(' funcRParams? ')';
+funcCall: IDENT '(' params? ')';
 block : '{' stat* '}' ;
 array : '{' params '}';
 
