@@ -9,7 +9,7 @@ program
    ;
 
 compUnit
-   : (funcDef | decl)+
+   : ( decl | funcDef )+
    ;
 
 decl : constDecl | varDecl;

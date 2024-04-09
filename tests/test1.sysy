@@ -8,6 +8,8 @@ int Fibonacci (int n)
         t1 = t2;
         i = i + 1;
     }
+    int a[4][2] ={};
+    int a[4][2] ={{1,2}};
     return t1;
 }
 
