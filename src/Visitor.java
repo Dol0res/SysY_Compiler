@@ -53,6 +53,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             if(spaceAroundList.contains(code)) {
                 if (!hasSpace){
                     output.append(" ");
+                    outputWithoutColor.append(" ");
                 }
                 hasSpace = true;
             } else if (spaceBehindList.contains(code)) {
@@ -79,6 +80,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             output.append("\u001B[0m");
 
             if(hasSpace)output.append(" ");
+            if(hasSpace)outputWithoutColor.append(" ");
 
         }
         return super.visitTerminal(node);
@@ -100,12 +102,15 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 
         if(ruleName.equals("block")) {
             if(ruleNameP.equals("functionDecl") || ruleNameP.equals("loop")) {
-                output.append(" ");
-                outputWithoutColor.append(" ");
+                if(!hasSpace) {
+                    output.append(" ");
+                    outputWithoutColor.append(" ");
+                }
             }else{
                 output.append("\n");
                 outputWithoutColor.append("\n");
             }
+            hasSpace=false;
         }
         if(ruleNameP.equals("block")){
             if( childNum>1&&node.getParent().getChild(1)==node) {
@@ -117,16 +122,14 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                 tab--;
             }
         }
-        if(ruleNameP.equals("loop")){
-            output.append(" ");
-        }
+
 
         super.visitChildren(node);
 
 
         if(ruleName.equals("varDecl")) underline = false;
         output.append("\u001B[0m");
-        if(ruleName.equals("stat")) {
+        if(ruleName.equals("stat") ) {
             output.append("\n");
             outputWithoutColor.append("\n");
         }

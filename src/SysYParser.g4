@@ -21,9 +21,12 @@ block : '{' stat* '}' ;
 stat : block    # BlockStat
      | varDecl  # VarDeclStat
      | 'return' exp? ';'   # ReturnStat
+     | 'if' '(' cond ')' stat ('else' stat )? #If
+     | 'if' '(' cond ')' 'then' stat ('else' stat )? #If
+     | 'while' '(' cond ')' stat #While
      | exp '=' exp ';'    # AssignStat
      | exp ';' # ExprStat
-     | loop #NeedTab
+
      ;
 
 exp
@@ -37,11 +40,6 @@ exp
    | funcCall
    ;
 
-loop
-    :'if' cond ('then' stat ('else' stat)? )?
-    | 'while' cond? block
-    | 'while' cond? stat
-    ;
 
 cond
    : exp
