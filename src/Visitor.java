@@ -114,9 +114,16 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         return null;
     }
 
-//    @Override
-//    public Void visitFunctionDecl(SysYParser.FunctionDeclContext ctx) {
-//        super.visitFunctionDecl(ctx);
+    @Override
+    public Void visitFuncDef(SysYParser.FuncDefContext ctx) {
+        super.visitFuncDef(ctx);
+        if(ctx.stop.getType()!=-1)output.append("\n");
+        return null;
+    }
+
+    //    @Override
+//    public Void visitFuncDef(SysYParser.FuncDefContext ctx) {
+//        super.visitFuncDef(ctx);
 //        if(ctx.stop.getType()!=-1)output.append("\n");
 //        return null;
 //    }
@@ -140,14 +147,14 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             childNum=node.getParent().getChildCount();
         }
 
-        if(ruleName.equals("functionDecl") && node.getParent().getChild(0)!=node){
+        if(ruleName.equals("funcDef") && node.getParent().getChild(0)!=node){
             output.append("\n");
         }
 
         if(ruleName.equals("block")) {
             //tab++;
-//            if(ruleNameP.equals("functionDecl") || ruleNameP.equals("loop")) {
-            if(ruleNameP.equals("functionDecl")) {
+//            if(ruleNameP.equals("funcDef") || ruleNameP.equals("loop")) {
+            if(ruleNameP.equals("funcDef")) {
                 output.append(" ");
                 outputWithoutColor.append(" ");
             }
@@ -173,7 +180,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         CharacterHighlighter.getColor(node);
         super.visitChildren(node);
 
-        if(ruleName.equals("varDecl")) {
+        if(ruleName.equals("decl")) {
             underline = false;
             changeLine=true;
 

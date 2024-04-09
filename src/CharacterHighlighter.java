@@ -27,7 +27,7 @@ class CharacterHighlighter {
             RuleContext ruleContext = ((RuleNode) node.getParent()).getRuleContext();
             int ruleIndex = ruleContext.getRuleIndex();
             String ruleName = SysYParser.ruleNames[ruleIndex];
-            if (ruleName.equals("functionDecl")||ruleName.equals("funcCall")) {
+            if (ruleName.equals("funcDef")||ruleName.equals("funcCall")) {
                 return "\u001B[93m";
             }
         } else if (tokenName.equals("L_PAREN") | tokenName.equals("R_PAREN") | tokenName.equals("L_BRACE") | tokenName.equals("R_BRACE") | tokenName.equals("L_BRACKT") | tokenName.equals("R_BRACKT")) {
@@ -51,7 +51,7 @@ class CharacterHighlighter {
                     return "\u001B[97m";
                 }
                 return "\u001B[0m";
-            case "varDecl":
+            case "decl":
                 Visitor.underline=true;
                 return "\u001B[95m";
 
