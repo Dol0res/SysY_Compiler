@@ -7,37 +7,67 @@ options {
 program
    : compUnit
    ;
+
 compUnit
-   : (functionDecl | varDecl)+ EOF
+   : (funcDef | decl)+ EOF
    ;
-varDecl : 'const'? type lVal ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
 
-type : INT | DOUBLE | VOID ;
+decl : constDecl | varDecl;
 
-functionDecl : type IDENT '(' funcRParams? ')' block ;
-funcCall: IDENT '(' params? ')';
-block : '{' stat* '}' ;
-array : '{' params '}';
+constDecl : 'const' bType constDef ( ',' constDef )* ';';
 
-stat :
-      varDecl  # VarDeclStat
-     | 'return' exp? ';'   # ReturnStat
-     | 'if' '(' cond ')' stat ('else' stat )? #If
-     | 'while' '(' cond ')' stat #While
-     | exp '=' exp ';'    # AssignStat
-     | exp ';' # ExprStat
-    |block    # BlockStat
-     ;
+bType : 'int';
+
+constDef :
+ IDENT ( '[' constExp ']' )* '=' constInitVal ;
+
+constInitVal :
+ constExp
+| '{' ( constInitVal ( ',' constInitVal )* )? '}';
+
+varDecl :
+ bType varDef ( ',' varDef )* ';' ;
+
+varDef :
+ IDENT ( '[' constExp ']' )*
+| IDENT ( '[' constExp ']' )* '=' initVal ;
+
+initVal :
+ exp | '{' ( initVal ( ',' initVal )* )? '}' ;
+
+funcDef :
+ funcType IDENT '(' (funcFParams)? ')' block ;
+
+funcType :
+ 'void' | 'int' ;
+
+funcFParams :
+ funcFParam ( ',' funcFParam )* ;
+
+funcFParam :
+ bType IDENT ('[' ']' ( '[' exp ']' )*)? ;
+
+ block :
+  '{' ( blockItem )* '}' ;
+
+ blockItem :
+  decl | stat;
+
+stat : lVal '=' exp ';' | (exp?) ';' | block
+    | 'if' '(' cond ')' stat ( 'else' stat )?
+    | 'while' '(' cond ')' stat
+    | 'break' ';' | 'continue' ';'
+    | 'return' (exp)? ';'
+    ;
 
 exp
    : L_PAREN exp R_PAREN
-   | funcCall
    | lVal
    | number
+   | IDENT L_PAREN funcRParams? R_PAREN
    | unaryOp exp
    | exp (MUL | DIV | MOD) exp
    | exp (PLUS | MINUS) exp
-   | array
    ;
 
 
@@ -47,7 +77,6 @@ cond
    | cond (EQ | NEQ) cond
    | cond AND cond
    | cond OR cond
-   | L_PAREN cond R_PAREN
    ;
 
 lVal
@@ -65,17 +94,12 @@ unaryOp
    ;
 
 funcRParams
-   : funcParam (COMMA funcParam)*
+   : param (COMMA param)*
    ;
 
-funcParam
-   : type IDENT
+param
+   : exp
    ;
-
-params
-   : exp (COMMA exp)*
-   ;
-
 
 constExp
    : exp

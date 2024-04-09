@@ -169,7 +169,8 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         }
 
         //core
-        output.append(CharacterHighlighter.getColor(node));
+        //output.append(CharacterHighlighter.getColor(node));
+        CharacterHighlighter.getColor(node);
         super.visitChildren(node);
 
         if(ruleName.equals("varDecl")) {
