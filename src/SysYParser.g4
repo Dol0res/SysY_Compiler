@@ -15,7 +15,7 @@ varDecl : type IDENT ('=' exp)? (',' IDENT ('=' exp)?)? ';' ;
 type : INT | DOUBLE | VOID ;
 
 functionDecl : type IDENT '(' funcRParams? ')' block ;
-funcCall: IDENT '(' funcRParams? ')';
+funcCall: IDENT '(' funcRParamsCall? ')';
 block : '{' stat* '}' ;
 
 stat : block    # BlockStat
