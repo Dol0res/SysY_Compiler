@@ -22,7 +22,7 @@ CONTINUE : 'continue';
 
 RETURN : 'return';
 
-
+PRINT:'print';
 
 PLUS : '+';
 
