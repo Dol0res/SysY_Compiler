@@ -4,8 +4,6 @@ CONST : 'const';
 
 INT : 'int';
 
-DOUBLE : 'double';
-
 VOID : 'void';
 
 IF : 'if';
