@@ -53,7 +53,7 @@ funcFParam :
  blockItem :
   decl | stat;
 
-stat : lVal '=' exp ';' | (exp?) ';' | block
+stat : lVal '=' exp ';' | (exp)? ';' | block
     | 'if' '(' cond ')' stat ( 'else' stat )?
     | 'while' '(' cond ')' stat
     | 'break' ';' | 'continue' ';'
