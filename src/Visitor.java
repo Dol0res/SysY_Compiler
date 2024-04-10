@@ -173,7 +173,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
                 output.append("    ".repeat(Math.max(0, tab)));
             }
         }
-        if(ruleName.equals("elseS"))
+//        if (ruleName.equals("elseS"))
 //        if (ruleName.equals("else")) {
 //            if (node.getChild(0).getText().charAt(0) == '{') {//block inside stat
 //                output.append(" ");
@@ -198,7 +198,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 
         output.append("\u001B[0m");
         if (ruleName.equals("stat") && (ruleNameP.equals("ifS") | ruleNameP.equals("whileS") | ruleNameP.equals("elseS"))) {
-            if (node.getChild(0).getText().charAt(0) == '{' ) {
+            if (node.getChild(0).getText().charAt(0) == '{') {
 
             } else if (ruleNameP.equals("elseS") && node.getChild(0).getText().startsWith("if")) {
 //            } else if (node.getChild(0).getText().equals("if") && node.getParent().getChild(node.getParent().getChildCount() - 2).getText().equals("else")) {
@@ -213,13 +213,14 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 
 //        if(outputWithoutColor.charAt(outputWithoutColor.length()-1)!='\n') {
         if (ruleName.equals("stat")) {
-            if (ruleNameP.equals("ifS") && node.getParent().getChildCount() == 6 && node.getChild(0).getText().charAt(0) == '{') {
-                changeLine = false;
-                hasSpace = true;
-            } else {
-                changeLine = true;
-                stat = false;
-            }
+//            if (ruleNameP.equals("ifS") && node.getParent().getChildCount() == 6 && node.getChild(0).getText().charAt(0) == '{') {
+//                changeLine = false;
+//                hasSpace = true;
+//            } else {
+//                changeLine = true;
+//            }
+            changeLine = true;
+            if (node.getChild(0).getText().charAt(0) != '{') stat = false;
         }
 
 
