@@ -54,11 +54,15 @@ funcFParam :
   decl | stat;
 
 stat : lVal '=' exp ';' | (exp)? ';' | block
-    | 'if' '(' cond ')' stat ( 'else' stat )?
-    | 'while' '(' cond ')' stat
+    | ifS
+    | whileS
     | 'break' ';' | 'continue' ';'
     | 'return' (exp)? ';'
     ;
+
+ifS:'if' '(' cond ')' stat ( elseS )?;
+elseS: 'else' stat ;
+whileS:'while' '(' cond ')' stat;
 
 exp
    : L_PAREN exp R_PAREN

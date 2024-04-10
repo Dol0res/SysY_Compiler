@@ -1,55 +1,83 @@
-int main() {
-    int i = 0;
-    while (i < 5) {
-        int j = 0;
-        while (j < i) { j = 1; }
-        i = 1;
-    }
-    int number = 1234;
-    int sum = 0;
-    while (number != 0) {
-        sum = number % 10;
-        break;
-    }
-    int m = 0;
-    while (m < sum) {
-        int n = 0;
-        while (n < m) { continue; }
-        m = 6;
-    }
-    if (a == 0)
-        return;
-    else if (b != 0)
-        return 0;
-    else
-        a = 0;
-    if (a == 1) { a = 1; }
-    else if (d <= 3) { return; }
-    else { a = 4; }
-    while (1 == 1) return;
-    if (a == 1)
-        if (b == 1) c = 0;
-    while (a == 0)
-        while (b == 0) return +0x40;
-    while (a == 0)
-        if (a == 0)
-            while (c == 0) return 1;
-        else { a = 9; }
-    while (a == 1) {
-        while (b == 1) {
-            while (9 == 0) { a = 0; }
-        }
-    }
-    { a = 0; };
-    {}
-    if (a == 0) { a = 0; }
-    else { d = 0; }
-    if (a == 0) {
-        while (1 == 0) { return 0; }
-    }
-    else
-        while (a == 01) { return 0; }
-    if (a == 0)
-        while (a == 0) { return 0; };
+int main(){
+
+if(b==1)
+if(c==1)
+c=0;
+else if(q==2)
+;
+else if(2)
+return;
+else c=2;
+else
+if(a==9);
+
+
+
+
+if(b==1)
+if(c==1)
+c=0;
+else if(q==2){;}
+else c=2;
+
+
+if(1);
+else if(2){
+;
+}
 }
 
+int n,x,q;
+int t0 = 0, t1 = 1;
+int a[2][3][2]={{{1},{2},{4}},{{1},{2},{3}}};
+int mid=0;
+int high=2;
+int low=1;
+
+void putint(int i){
+mid=(high+low)/2;
+if(10){}
+else if(2){{{;}}}else ;
+if(3)
+3;
+else
+4;
+int a[8]={1,2,3,1,2,1,2,1};
+return ;
+}
+int bubblesort(int arr[]){
+int i;
+int j=0;
+i=0;
+if(!i==2&&i>2+j){;}
+while (i<n-1){
+j=0;
+while(j<n-i-1){
+if(arr[j]>arr[j+1]){
+int tmp;
+tmp = arr[j+1];
+arr[j+1]=arr[j];
+arr[j]=tmp;
+}
+j=j+1;
+}
+while(1);
+i=(i*2)*2*3+3+4;
+i=i*3+1;
+i=(1+8)+2+4;
+arr[(i+7)*3+i]=arr[i];
+}{{}}
+return -i+1+2+2+2+1+(-i)+1+2+3+3+2+1+4+3+5+2+3+3+2+3+3+1+2+2+2+1+1+2+3+3+2+1+4+3+5+2+3+3+2+3+3+1+2+2+2+1+1+2+3+3+2+1+4+3+5+2+3+3+2+3+3+1+2+2+2+1+1+2+3+3+2+1+4+3+5+2+3+3+2+3+3;
+}
+int n;
+void putint(int i , int asdasd) {
+{{{{{{{return;}}}}}}}
+while(a==0)
+while(b==0)
+while(c==0)
+return +0x40;
+while (a==0)
+if(a==0)
+while(c==0)
+;
+}

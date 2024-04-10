@@ -17,8 +17,8 @@ class Visitor extends SysYParserBaseVisitor<Void> {
     static boolean stat = false;
 
     static int tab = 0;
-    String[] spaceBehind = new String[]{"const","int","void","if","else","while","return"};
-    String[] spaceAround = new String[]{"*","/","%","=","==","!=","<",">","<=",">=","&&","||"};
+    String[] spaceBehind = new String[]{"const", "int", "void", "if", "else", "while", "return"};
+    String[] spaceAround = new String[]{"*", "/", "%", "=", "==", "!=", "<", ">", "<=", ">=", "&&", "||"};
     List<String> spaceBehindList = Arrays.asList(spaceBehind);
     List<String> spaceAroundList = Arrays.asList(spaceAround);
 
@@ -44,55 +44,55 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 
     @Override
     public Void visitTerminal(TerminalNode node) {
-        if(node.getSymbol().getType()!=-1) {
-            if(hasSpace)output.append(" ");
-            if(hasSpace)outputWithoutColor.append(" ");
+        if (node.getSymbol().getType() != -1) {
+            if (hasSpace) output.append(" ");
+            if (hasSpace) outputWithoutColor.append(" ");
 
             String code = node.getSymbol().getText();
-            String ruleNameP ="";
-            int childNum=0;
-            if(node.getParent()!=null){
+            String ruleNameP = "";
+            int childNum = 0;
+            if (node.getParent() != null) {
                 ruleNameP = getRuleName((RuleNode) node.getParent());
-                childNum=node.getParent().getChildCount();
+                childNum = node.getParent().getChildCount();
             }
-            if(changeLine){
+            if (changeLine) {
                 output.append("\n");
                 outputWithoutColor.append("\n");
-                if(ruleNameP.equals("block") && code.equals("}")) {
+                if (ruleNameP.equals("block") && code.equals("}")) {
                     tab--;
                 }
                 output.append("    ".repeat(Math.max(0, tab)));
                 outputWithoutColor.append("    ".repeat(Math.max(0, tab)));
-                changeLine=false;
+                changeLine = false;
             }
-            if(ruleNameP.equals("block")){
-                if(code.equals("{")) {
+            if (ruleNameP.equals("block")) {
+                if (code.equals("{")) {
                     changeLine = true;
                     tab++;
                 }
             }
 
-            if(spaceAroundList.contains(code)) {
-                if (!hasSpace){
+            if (spaceAroundList.contains(code)) {
+                if (!hasSpace) {
                     output.append(" ");
                     outputWithoutColor.append(" ");
                 }
                 hasSpace = true;
             } else if (spaceBehindList.contains(code)) {
                 hasSpace = true;
-                if(code.equals("return") && node.getParent().getChild(1).getText().equals(";"))hasSpace=false;
+                if (code.equals("return") && node.getParent().getChild(1).getText().equals(";")) hasSpace = false;
             } else if ((code.equals("-") || code.equals("+")) && !getRuleName((RuleNode) node.getParent()).equals("unaryOp")) {
-                if (!hasSpace){
+                if (!hasSpace) {
                     output.append(" ");
                 }
                 hasSpace = true;
             } else if (code.equals(",")) {
-                hasSpace=true;
-            } else{
+                hasSpace = true;
+            } else {
                 hasSpace = false;
             }
 
-            if(underline) {
+            if (underline) {
                 output.append("\u001B[4m");
                 output.append("\u001B[95m");
             } else if (stat) {
@@ -109,7 +109,6 @@ class Visitor extends SysYParserBaseVisitor<Void> {
             output.append("\u001B[0m");
 
 
-
         }
         return null;
     }
@@ -117,7 +116,7 @@ class Visitor extends SysYParserBaseVisitor<Void> {
     @Override
     public Void visitFuncDef(SysYParser.FuncDefContext ctx) {
         super.visitFuncDef(ctx);
-        if(ctx.stop.getType()!=-1)output.append("\n");
+        if (ctx.stop.getType() != -1) output.append("\n");
         return null;
     }
 
@@ -131,81 +130,85 @@ class Visitor extends SysYParserBaseVisitor<Void> {
 
     @Override
     public Void visitChildren(RuleNode node) {
-        if(changeLine && outputWithoutColor.charAt(outputWithoutColor.length()-1)!=' '){
+        if (changeLine && outputWithoutColor.charAt(outputWithoutColor.length() - 1) != ' ') {
             output.append("\n");
             outputWithoutColor.append("\n");
             output.append("    ".repeat(Math.max(0, tab)));
             outputWithoutColor.append("    ".repeat(Math.max(0, tab)));
-            changeLine=false;
+            changeLine = false;
         }
 
         String ruleName = getRuleName(node);
-        String ruleNameP ="";
-        int childNum=0;
-        if(node.getParent()!=null){
+        String ruleNameP = "";
+        int childNum = 0;
+        if (node.getParent() != null) {
             ruleNameP = getRuleName((RuleNode) node.getParent());
-            childNum=node.getParent().getChildCount();
+            childNum = node.getParent().getChildCount();
         }
 
-        if(ruleName.equals("funcDef") && node.getParent().getChild(0)!=node){
+        if (ruleName.equals("funcDef") && node.getParent().getChild(0) != node) {
             output.append("\n");
         }
 
-        if(ruleName.equals("block")) {
+        if (ruleName.equals("block")) {
             //tab++;
 //            if(ruleNameP.equals("funcDef") || ruleNameP.equals("loop")) {
-            if(ruleNameP.equals("funcDef")) {
+            if (ruleNameP.equals("funcDef")) {
                 output.append(" ");
                 outputWithoutColor.append(" ");
             }
-            hasSpace=false;
+            hasSpace = false;
         }
-        if(ruleName.equals("stat") &&ruleNameP.equals("stat")) {
-            String head =node.getParent().getChild(0).getText();
-            if(head.equals("if")|| head.equals("while")){
-                if(node.getChild(0).getText().charAt(0)=='{'){
-                    output.append(" ");
-                } else if (node.getChild(0).getText().equals("if") && node.getParent().getChild(node.getParent().getChildCount()-2).getText().equals("else")) {
-                    //output.append(" ");
-                } else {
-                    output.append("\n");
-                    hasSpace=false;
-                    tab++;
-                    output.append("    ".repeat(Math.max(0, tab)));
-                }
+        if (ruleName.equals("stat") && (ruleNameP.equals("ifS") | ruleNameP.equals("whileS") | ruleNameP.equals("elseS"))) {
+            if (node.getChild(0).getText().charAt(0) == '{') {//block inside stat
+                output.append(" ");
+            } else {
+                output.append("\n");
+                hasSpace = false;
+                tab++;
+                output.append("    ".repeat(Math.max(0, tab)));
             }
-
         }
+//        if (ruleName.equals("else")) {
+//            if (node.getChild(0).getText().charAt(0) == '{') {//block inside stat
+//                output.append(" ");
+//            }else {
+//                output.append("\n");
+//                hasSpace = false;
+//                tab++;
+//                output.append("    ".repeat(Math.max(0, tab)));
+//            }
+//        }
 
         //core
         //output.append(CharacterHighlighter.getColor(node));
         CharacterHighlighter.getColor(node);
         super.visitChildren(node);
 
-        if(ruleName.equals("decl")) {
+        if (ruleName.equals("decl")) {
             underline = false;
-            changeLine=true;
+            changeLine = true;
 
         }
 
         output.append("\u001B[0m");
-        if(ruleName.equals("stat") &&ruleNameP.equals("stat")) {
-            String head =node.getParent().getChild(0).getText();
-            if(head.equals("if")|| head.equals("while")){
-                if(node.getChild(0).getText().charAt(0)=='{'){
-                } else if (node.getChild(0).getText().equals("if") && node.getParent().getChild(node.getParent().getChildCount()-2).getText().equals("else")) {
-                    //output.append(" ");
-                } else {
-                    tab--;
-                }
+        if (ruleName.equals("stat") && (ruleNameP.equals("ifS") | ruleNameP.equals("whileS") | ruleNameP.equals("elseS"))) {
+            if (node.getChild(0).getText().charAt(0) == '{') {
+//            } else if (node.getChild(0).getText().equals("if") && node.getParent().getChild(node.getParent().getChildCount() - 2).getText().equals("else")) {
+//                //output.append(" ");
+            } else {
+                tab--;
             }
 
+
         }
+
+
 //        if(outputWithoutColor.charAt(outputWithoutColor.length()-1)!='\n') {
-            if (ruleName.equals("stat")) {
-                changeLine=true;
-                stat=false;
-            }
+        if (ruleName.equals("stat")) {
+            changeLine = true;
+            stat = false;
+        }
 //            if (ruleName.equals("block")) {
 //                changeLine=true;
 //            }
