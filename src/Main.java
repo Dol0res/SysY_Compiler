@@ -12,8 +12,8 @@ public class Main
         if (args.length < 1) {
             System.err.println("input path is required");
         }
-        String source = args[0];
-        //String source = "tests/test1.sysy";
+        //String source = args[0];
+        String source = "tests/test1.sysy";
         CharStream input = CharStreams.fromFileName(source);
         SysYLexer sysYLexer = new SysYLexer(input);
 //        sysYLexer.removeErrorListeners();
@@ -36,7 +36,7 @@ public class Main
             //myErrorListener.printLexerErrorInformation();
             myErrorListener.printParserErrorInformation();
         } else {
-            Visitor visitor = new Visitor();
+            MyVisitor visitor = new MyVisitor();
             visitor.visit(tree);
             //visitor.visitExp(ctx);
 //            for (Token t : tokens) {

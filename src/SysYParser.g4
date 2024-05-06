@@ -1,112 +1,125 @@
 parser grammar SysYParser;
 
 options {
-    tokenVocab = SysYLexer;//注意使用该语句指定词法分析器；请不要修改词法分析器或语法分析器的文件名，否则Makefile可能无法正常工作，影响评测结果
+    tokenVocab = SysYLexer;
 }
 
-program
-   : compUnit
-   ;
+program : compUnit;
 
-compUnit
-   : ( decl | funcDef )+
-   ;
+// 编译单元
+compUnit : (funcDef | decl)+ EOF;
 
+// 下面是其他的语法单元定义
+
+// 声明
 decl : constDecl | varDecl;
 
-constDecl : 'const' bType constDef ( ',' constDef )* ';';
+// 常量声明
+constDecl : CONST bType constDef (COMMA constDef)* SEMICOLON;
 
-bType : 'int';
+// 基本类型
+bType : INT;
 
-constDef :
- IDENT ( '[' constExp ']' )* '=' constInitVal ;
+// 常数定义
+constDef : IDENT (L_BRACKT constExp R_BRACKT)* ASSIGN constInitVal;
 
-constInitVal :
- constExp
-| '{' ( constInitVal ( ',' constInitVal )* )? '}';
+// 常量初值
+constInitVal : constExp | L_BRACE (constInitVal (COMMA constInitVal)*)? R_BRACE;
 
-varDecl :
- bType varDef ( ',' varDef )* ';' ;
+// 变量声明
+varDecl : bType varDef (COMMA varDef)* SEMICOLON;
 
-varDef :
- IDENT ( '[' constExp ']' )*
-| IDENT ( '[' constExp ']' )* '=' initVal ;
+// 变量定义
+varDef : IDENT (L_BRACKT constExp R_BRACKT)* (ASSIGN initVal)?;
 
-initVal :
- exp | '{' ( initVal ( ',' initVal )* )? '}' ;
+// 变量初值
+initVal : exp | L_BRACE (initVal (COMMA initVal)*)? R_BRACE;
 
-funcDef :
- funcType IDENT '(' (funcFParams)? ')' block ;
+// 函数定义
+funcDef : funcType IDENT L_PAREN (funcFParams)? R_PAREN block;
 
-funcType :
- 'void' | 'int' ;
+// 函数类型
+funcType : VOID | INT;
 
-funcFParams :
- funcFParam ( ',' funcFParam )* ;
+// 函数形参表
+funcFParams : funcFParam (COMMA funcFParam)*;
 
-funcFParam :
- bType IDENT ('[' ']' ( '[' exp ']' )*)? ;
+// 函数形参
+funcFParam : bType IDENT (L_BRACKT R_BRACKT (L_BRACKT exp R_BRACKT)*)?;
 
- block :
-  '{' ( blockItem )* '}' ;
+// 语句块
+block : L_BRACE (blockItem)* R_BRACE;
 
- blockItem :
-  decl | stat;
+// 语句块项
+blockItem : decl | stmt;
 
-stat : lVal '=' exp ';' | (exp)? ';' | block
-    | ifS
-    | whileS
-    | 'break' ';' | 'continue' ';'
-    | 'return' (exp)? ';'
+// 语句
+stmt : lVal ASSIGN exp SEMICOLON
+    | (exp)? SEMICOLON
+    | block
+    | IF L_PAREN cond R_PAREN stmt (ELSE stmt)?
+    | WHILE L_PAREN cond R_PAREN stmt
+    | BREAK SEMICOLON
+    | CONTINUE SEMICOLON
+    | RETURN (exp)? SEMICOLON
     ;
 
-ifS:'if' '(' cond ')' stat ( elseS )?;
-elseS: 'else' stat ;
-whileS:'while' '(' cond ')' stat;
-
-exp
-   : L_PAREN exp R_PAREN
+// 表达式
+exp : L_PAREN exp R_PAREN
    | lVal
    | number
-   | funcCall
-   |IDENT L_PAREN funcRParams? R_PAREN
+   | IDENT L_PAREN funcRParams? R_PAREN
    | unaryOp exp
    | exp (MUL | DIV | MOD) exp
    | exp (PLUS | MINUS) exp
    ;
 
-funcCall:IDENT L_PAREN funcRParams? R_PAREN;
-
-cond
-   : exp
+// 条件表达式
+cond : exp
    | cond (LT | GT | LE | GE) cond
    | cond (EQ | NEQ) cond
    | cond AND cond
    | cond OR cond
    ;
 
-lVal
-   : IDENT (L_BRACKT exp R_BRACKT)*
-   ;
+// 左值表达式
+lVal : IDENT (L_BRACKT exp R_BRACKT)*;
 
-number
-   : INTEGER_CONST
-   ;
+// 基本表达式
+//primaryExp : L_PAREN exp R_PAREN | lVal | number;
 
-unaryOp
-   : PLUS
-   | MINUS
-   | NOT
-   ;
+// 数值
+number : INTEGR_CONST;
 
-funcRParams
-   : param (COMMA param)*
-   ;
+// 一元表达式
+//unaryExp : primaryExp | IDENT L_PAREN (funcRParams)? R_PAREN | unaryOp unaryExp;
 
-param
-   : exp
-   ;
+// 单目运算符
+unaryOp : PLUS | MINUS | NOT;
 
-constExp
-   : exp
-   ;
+// 函数实参表， from TA
+funcRParams : param (COMMA param)*;
+
+// from TA
+param : exp;
+
+//// 乘除模表达式
+//mulExp : unaryOp | mulExp (MUL | DIV | MOD) unaryExp;
+//
+//// 加减表达式
+//addExp : mulExp | addExp (PLUS | MINUS) mulExp;
+//
+//// 关系表达式
+//relExp : addExp | relExp (LT | GT | LE | GE) addExp;
+//
+//// 相等性表达式
+//eqExp : relExp | eqExp (EQ | NEQ) relExp;
+//
+//// 逻辑与表达式
+//lAndExp : eqExp | lAndExp LAND eqExp;
+//
+//// 逻辑或表达式
+//lOrExp : lAndExp | lOrExp LOR lAndExp;
+
+// 常量表达式
+constExp : exp;
