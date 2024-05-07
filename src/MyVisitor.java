@@ -160,7 +160,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 //hasError=true;
                 // OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
             } else {
-                if(!checkType(lType, rType, 5, ctx.getStart().getLine())){
+                if(lType != null && !checkType(lType, rType, 5, ctx.getStart().getLine())){
                     return null;
                 }
             }
