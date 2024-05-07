@@ -149,26 +149,34 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             if (lType == null) {
                 hasError = true;
                 OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
+                //return null;
             } else if (lType instanceof FunctionType) {
                 hasError = true;
                 OutputHelper.printSemanticError(11, ctx.ASSIGN().getSymbol().getLine());//变量未声明
-            } else if (rType == null) {
+                return null;
+
+            }
+            if (rType == null) {
                 //hasError=true;
                 // OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
             } else {
-                checkType(lType, rType, 5, ctx.ASSIGN().getSymbol().getLine());
+                if(!checkType(lType, rType, 5, ctx.ASSIGN().getSymbol().getLine())){
+                    return null;
+                }
             }
         } else if (ctx.RETURN() != null) {
             if (ctx.exp() == null) {
                 if (funcRetType != Type.getVoidType()) {
                     hasError = true;
                     OutputHelper.printSemanticError(7, ctx.RETURN().getSymbol().getLine());//变量未声明
+                    return null;
 
                 }
             } else {
                 if (funcRetType != getExpType(ctx.exp())) {
                     hasError = true;
                     OutputHelper.printSemanticError(7, ctx.RETURN().getSymbol().getLine());//变量未声明
+                    return null;
 
                 }
             }
@@ -188,11 +196,14 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             if (type == null) {
                 hasError = true;
                 OutputHelper.printSemanticError(2, ctx.IDENT().getSymbol().getLine());
+                return null;
                 //return super.visitExp(ctx);
 
             } else if (!(type instanceof FunctionType)) {
                 hasError = true;
                 OutputHelper.printSemanticError(10, ctx.IDENT().getSymbol().getLine());
+                return null;
+
                 //return super.visitExp(ctx);
             } else {
 
@@ -204,7 +215,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                         if (paramsType.isEmpty()) {
                             hasError = true;
                             OutputHelper.printSemanticError(8, ctx.IDENT().getSymbol().getLine());//函数未定义
-                            break;
+                            return null;
+
                         }
                         Type rType = paramsType.get(0);
                         checkType(lType, rType, 8, ctx.IDENT().getSymbol().getLine());
@@ -213,6 +225,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                     if (!paramsType.isEmpty()) {
                         hasError = true;
                         OutputHelper.printSemanticError(8, ctx.IDENT().getSymbol().getLine());//函数未定义
+                        return null;
+
                     }
                 }
             }
@@ -224,6 +238,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             if (expType != IntType.getI32()) {
                 hasError = true;
                 OutputHelper.printSemanticError(6, ctx.unaryOp().getStart().getLine());
+                return null;
+
             }
         } else if (ctx.MUL() != null || ctx.DIV() != null || ctx.MOD() != null || ctx.PLUS() != null || ctx.MINUS() != null) {
             Type op1Type = getExpType(ctx.exp(0)), op2Type = getExpType(ctx.exp(1));
@@ -233,6 +249,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             } else {
                 hasError = true;
                 OutputHelper.printSemanticError(6, ctx.getStart().getLine());
+                return null;
+
             }
         }
         return super.visitExp(ctx);
@@ -258,6 +276,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
         } else if (ctx.exp() != null && !ctx.exp().isEmpty()) {
             hasError = true;
             OutputHelper.printSemanticError(9, ctx.getStart().getLine());
+            return null;
+
         }
         return type;
     }
@@ -323,7 +343,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
         return null;
     }
 
-    private void checkType(Type lType, Type rType, int ErrorType, int line) {
+    private boolean checkType(Type lType, Type rType, int ErrorType, int line) {
         if (lType instanceof ArrayType && rType instanceof ArrayType) {
 //                if(((ArrayType) lType).getContained() != IntType.getI32()){
 //                    hasError=true;
@@ -332,11 +352,14 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             if (((ArrayType) lType).getNum_elements() != ((ArrayType) lType).getNum_elements()) {
                 hasError = true;
                 OutputHelper.printSemanticError(ErrorType, line);//函数未定义
+                return false;
             }
 
         } else if (lType != rType) {
             hasError = true;
             OutputHelper.printSemanticError(ErrorType, line);//函数未定义
+            return false;
         }
+        return true;
     }
 }
