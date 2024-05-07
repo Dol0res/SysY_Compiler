@@ -155,7 +155,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 return null;
 
             }
-            if (rType == null) {
+            else if (rType == null) {
                 //hasError=true;
                 // OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
             } else {
