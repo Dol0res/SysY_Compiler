@@ -219,7 +219,9 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
                         }
                         Type rType = paramsType.get(0);
-                        checkType(lType, rType, 8, ctx.IDENT().getSymbol().getLine());
+                        if(!checkType(lType, rType, 8, ctx.IDENT().getSymbol().getLine())){
+                            return null;
+                        }
                         paramsType.remove(0);
                     }
                     if (!paramsType.isEmpty()) {
