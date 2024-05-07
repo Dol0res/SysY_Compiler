@@ -86,12 +86,13 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
         //System.out.println(ctx.getText());
         Scope curScope = scopeStack.peek();
 
-        Scope newScope = new Scope(null); // 添加新作用域
-
+        Scope newScope = new Scope(curScope); // 添加新作用域
+        scopeStack.push(newScope);
         //some code // 将形参添加到作用域里
 
         ctx.blockItem().forEach(this::visit); // 依次visit block中的节点
         //切换回父级作用域
+        scopeStack.pop();
         //curScope = curScope.parent;
 
         return null;
@@ -146,19 +147,20 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
             if (lType == null) {
                 hasError = true;
-                OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
+                OutputHelper.printSemanticError(1, ctx.getStart().getLine());//变量未声明
                 //return null;
             } else if (lType instanceof FunctionType) {
                 hasError = true;
-                OutputHelper.printSemanticError(11, ctx.ASSIGN().getSymbol().getLine());//变量未声明
+                OutputHelper.printSemanticError(11, ctx.getStart().getLine());//变量未声明
                 return null;
 
             }
             if (rType == null) {
+                return super.visitStmt(ctx);
                 //hasError=true;
                 // OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
             } else {
-                if(!checkType(lType, rType, 5, ctx.ASSIGN().getSymbol().getLine())){
+                if(!checkType(lType, rType, 5, ctx.getStart().getLine())){
                     return null;
                 }
             }
@@ -237,7 +239,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             Type expType = getExpType(ctx.exp(0));
             if (expType != IntType.getI32()) {
                 hasError = true;
-                OutputHelper.printSemanticError(6, ctx.unaryOp().getStart().getLine());
+                OutputHelper.printSemanticError(6, ctx.getStart().getLine());
                 return null;
 
             }
