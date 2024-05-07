@@ -7,7 +7,7 @@ import java.util.Stack;
 
 public class MyVisitor extends SysYParserBaseVisitor<Void> {
     private Stack<Scope> scopeStack = new Stack<>();
-
+    private Type funcRetType = null;
 //    @Override
 //    public Void visit(ParseTree tree) {
 //        // Initialize the global scope
@@ -67,12 +67,12 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
         FunctionType functionType = new FunctionType(retType, paramsTyList);
         curScope.define(funcName, functionType); // Define the function in the current scope
-
+        funcRetType = retType;
         // Create a new scope for the function body
         scopeStack.push(new Scope(curScope));
         visit(ctx.block());
         scopeStack.pop(); // Pop the function scope after visiting its block
-
+        funcRetType = null;
         return null;
     }
 
@@ -98,7 +98,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
         String varName = ctx.IDENT().getText(); // c or d
         Scope curScope = scopeStack.peek();
 
-        if (curScope.find(varName) != null) {
+        if (curScope.findCurrent(varName) != null ) {
             OutputHelper.printSemanticError(3, ctx.IDENT().getSymbol().getLine());
             return null;
         }
@@ -139,11 +139,28 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             Type lType = curScope.find(varName);
             Type rType = getExpType(ctx.exp());
 
-            if (lType == null || rType == null) {
+            if (lType == null ) {
                 OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
-                return null;
+            }else if (lType instanceof FunctionType) {
+                OutputHelper.printSemanticError(11, ctx.ASSIGN().getSymbol().getLine());//变量未声明
+            }else if (rType == null) {
+                //OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
+            }else {
+                checkType(lType, rType, 5, ctx.ASSIGN().getSymbol().getLine());
             }
-            checkType(lType,rType,6,ctx.ASSIGN().getSymbol().getLine());
+        } else if (ctx.RETURN() !=null) {
+            if(ctx.exp()==null) {
+                if (funcRetType != Type.getVoidType()) {
+                    OutputHelper.printSemanticError(7, ctx.RETURN().getSymbol().getLine());//变量未声明
+
+                }
+            }else{
+                if (funcRetType != getExpType(ctx.exp())) {
+                    OutputHelper.printSemanticError(7, ctx.RETURN().getSymbol().getLine());//变量未声明
+
+                }
+            }
+
         }
         super.visitStmt(ctx);
         return null;
@@ -151,24 +168,51 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
     @Override
     public Void visitExp(SysYParser.ExpContext ctx) {
-        String funcName = ctx.IDENT().getText();
-        Scope curScope = scopeStack.peek();
-        Type type = curScope.find(funcName);
+        //funcCall
+        if(ctx.IDENT()!=null) {
+            String funcName = ctx.IDENT().getText();
+            Scope curScope = scopeStack.peek();
+            Type type = curScope.find(funcName);
+            if(type == null){
+                OutputHelper.printSemanticError(2, ctx.IDENT().getSymbol().getLine());
+                return super.visitExp(ctx);
+            }else if(!(type instanceof FunctionType)) {
+                OutputHelper.printSemanticError(10, ctx.IDENT().getSymbol().getLine());
+                return super.visitExp(ctx);
+            }
 
-        FunctionType functionType = (FunctionType) type;
-        ArrayList<Type> paramsType = functionType.getParamsType(), argsType = new ArrayList<>();
-        if (ctx.funcRParams() != null) {
-            for (SysYParser.ParamContext paramContext : ctx.funcRParams().param()) {
-                Type lType = getExpType(paramContext.exp());
-                if(paramsType.isEmpty()) {
+            FunctionType functionType = (FunctionType) type;
+            ArrayList<Type> paramsType = functionType.getParamsType(), argsType = new ArrayList<>();
+            if (ctx.funcRParams() != null) {
+                for (SysYParser.ParamContext paramContext : ctx.funcRParams().param()) {
+                    Type lType = getExpType(paramContext.exp());
+                    if (paramsType.isEmpty()) {
+                        OutputHelper.printSemanticError(8, ctx.IDENT().getSymbol().getLine());//函数未定义
+                        break;
+                    }
+                    Type rType = paramsType.get(0);
+                    checkType(lType, rType, 8, ctx.IDENT().getSymbol().getLine());
+                    paramsType.remove(0);
+                }
+                if (!paramsType.isEmpty()) {
                     OutputHelper.printSemanticError(8, ctx.IDENT().getSymbol().getLine());//函数未定义
                 }
-                Type rType = paramsType.get(0);
-                checkType(lType,rType,8,ctx.IDENT().getSymbol().getLine());
-                paramsType.remove(0);
             }
-            if(!paramsType.isEmpty()) {
-                OutputHelper.printSemanticError(8, ctx.IDENT().getSymbol().getLine());//函数未定义
+        }
+
+        //+-*/
+        else if (ctx.unaryOp() != null) { // unaryOp exp
+            Type expType = getExpType(ctx.exp(0));
+            if (expType != IntType.getI32()) {
+                OutputHelper.printSemanticError(6, ctx.unaryOp().getStart().getLine());
+            }
+        } else if (ctx.MUL() != null || ctx.DIV() != null || ctx.MOD() != null || ctx.PLUS() != null || ctx.MINUS() != null) {
+            Type op1Type = getExpType(ctx.exp(0)), op2Type = getExpType(ctx.exp(1));
+//            if (op1Type.toString().equals("noType") || op2Type.toString().equals("noType")) {
+//            } else
+                if (op1Type == IntType.getI32() && op2Type == IntType.getI32()) {
+            } else {
+                OutputHelper.printSemanticError(6, ctx.getStart().getLine());
             }
         }
         return super.visitExp(ctx);
@@ -191,6 +235,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 return null;
             }
             return new ArrayType(IntType.getI32(), d2-d1 );
+        }else if (ctx.exp()!=null && !ctx.exp().isEmpty()){
+            OutputHelper.printSemanticError(9, ctx.getStart().getLine());
         }
         return type;
     }
@@ -217,12 +263,14 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
     private Type getExpType(SysYParser.ExpContext ctx) {
         Scope curScope = scopeStack.peek();
-
         if (ctx.IDENT() != null) { // func
             //assert ctx.IDENT().getText() != null : "funcName 为空";
             String funcName = ctx.IDENT().getText();
-            return curScope.find(funcName);
-
+            Type type = curScope.find(funcName);
+            if (type instanceof FunctionType) {
+                return ((FunctionType) type).getRetTy();
+            }
+            return null;
         } else if (ctx.L_PAREN() != null) { // L_PAREN exp R_PAREN
             return getExpType(ctx.exp(0));
         } else if (ctx.unaryOp() != null) { // unaryOp exp

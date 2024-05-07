@@ -28,6 +28,13 @@ public class Scope {
             return null;
         }
     }
+    public Type findCurrent(String name) {
+        Type symbol = symbols.get(name);
+        if (symbol != null) {
+            return symbol;
+        }
+        return null;
+    }
 
     public void put(String varName, Type type) {
         this.symbols.put(varName, type);
