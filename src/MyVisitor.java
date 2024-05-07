@@ -245,9 +245,11 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             }
         } else if (ctx.MUL() != null || ctx.DIV() != null || ctx.MOD() != null || ctx.PLUS() != null || ctx.MINUS() != null) {
             Type op1Type = getExpType(ctx.exp(0)), op2Type = getExpType(ctx.exp(1));
-//            if (op1Type.toString().equals("noType") || op2Type.toString().equals("noType")) {
-//            } else
-            if (op1Type == IntType.getI32() && op2Type == IntType.getI32()) {
+            if (op1Type== null || op2Type== null) {
+                hasError = true;
+                OutputHelper.printSemanticError(1, ctx.getStart().getLine());
+                return null;
+            } else if (op1Type == IntType.getI32() && op2Type == IntType.getI32()) {
             } else {
                 hasError = true;
                 OutputHelper.printSemanticError(6, ctx.getStart().getLine());
