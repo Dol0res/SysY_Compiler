@@ -148,7 +148,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             if (lType == null) {
                 hasError = true;
                 OutputHelper.printSemanticError(1, ctx.getStart().getLine());//变量未声明
-                return null;
+                //return null;
             } else if (lType instanceof FunctionType) {
                 hasError = true;
                 OutputHelper.printSemanticError(11, ctx.getStart().getLine());//变量未声明
@@ -156,11 +156,10 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
             }
             if (rType == null) {
-                return super.visitStmt(ctx);
                 //hasError=true;
                 // OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
             } else {
-                if(lType != null && !checkType(lType, rType, 5, ctx.getStart().getLine())){
+                if(!checkType(lType, rType, 5, ctx.getStart().getLine())){
                     return null;
                 }
             }
