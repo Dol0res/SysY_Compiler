@@ -89,7 +89,7 @@ lVal : IDENT (L_BRACKT exp R_BRACKT)*;
 //primaryExp : L_PAREN exp R_PAREN | lVal | number;
 
 // 数值
-number : INTEGR_CONST;
+number : INTEGER_CONST;
 
 // 一元表达式
 //unaryExp : primaryExp | IDENT L_PAREN (funcRParams)? R_PAREN | unaryOp unaryExp;
