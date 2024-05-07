@@ -132,7 +132,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitStat(SysYParser.StatContext ctx) {
+    public Void visitStmt(SysYParser.StmtContext ctx) {
         if (ctx.ASSIGN() != null) {
             String varName = ctx.lVal().getText(); // c or d
             Scope curScope = scopeStack.peek();
@@ -145,12 +145,12 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             }
             checkType(lType,rType,6,ctx.ASSIGN().getSymbol().getLine());
         }
-        super.visitStat(ctx);
+        super.visitStmt(ctx);
         return null;
     }
 
     @Override
-    public Void visitFuncCall(SysYParser.FuncCallContext ctx) {
+    public Void visitExp(SysYParser.ExpContext ctx) {
         String funcName = ctx.IDENT().getText();
         Scope curScope = scopeStack.peek();
         Type type = curScope.find(funcName);
@@ -171,7 +171,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 OutputHelper.printSemanticError(8, ctx.IDENT().getSymbol().getLine());//函数未定义
             }
         }
-        return super.visitFuncCall(ctx);
+        return super.visitExp(ctx);
     }
 
     private Type getLValType(SysYParser.LValContext ctx) {
@@ -218,7 +218,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     private Type getExpType(SysYParser.ExpContext ctx) {
         Scope curScope = scopeStack.peek();
 
-        if (ctx.funcCall() != null) { // func
+        if (ctx.IDENT() != null) { // func
             //assert ctx.IDENT().getText() != null : "funcName 为空";
             String funcName = ctx.IDENT().getText();
             return curScope.find(funcName);
