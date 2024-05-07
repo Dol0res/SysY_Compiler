@@ -127,8 +127,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
     @Override
     public Void visitCond(SysYParser.CondContext ctx) {
-        String varName = ctx.exp().getText(); // c or d
-        Scope curScope = scopeStack.peek();
         if (ctx.exp() == null && getCondType(ctx) != IntType.getI32()) {
             hasError = true;
             OutputHelper.printSemanticError(6, ctx.getStart().getLine());
