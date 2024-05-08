@@ -146,7 +146,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
         String varName = ctx.IDENT().getText(); // c or d
         Scope curScope = scopeStack.peek();
 
-        if (curScope.findCurrent(varName) != null) {
+        if (curScope.findCurrent(varName) != null ) {
             hasError = true;
             OutputHelper.printSemanticError(3, ctx.IDENT().getSymbol().getLine());
             return null;
@@ -154,7 +154,9 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
         if (ctx.constExp().isEmpty()) {     //非数组
             curScope.put(varName, IntType.getI32());
-            if (ctx.ASSIGN() != null) {     // 包含定义语句
+            if (ctx.ASSIGN() != null) {
+                // 包含定义语句
+                visitInitVal(ctx.initVal());
                 Type lType = IntType.getI32();
                 if(ctx.initVal().exp()==null){
                     hasError = true;
