@@ -328,6 +328,11 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
                 FunctionType functionType = (FunctionType) type;
                 ArrayList<Type> paramsType = functionType.getParamsType();
+                if(!paramsType.isEmpty() && ctx.funcRParams() == null){
+                    hasError = true;
+                    OutputHelper.printSemanticError(8, ctx.IDENT().getSymbol().getLine());//函数未定义
+                    return null;
+                }
                 if (ctx.funcRParams() != null) {
                     if(ctx.funcRParams().param().size()!=paramsType.size()){
                         hasError = true;
@@ -424,26 +429,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
         }
         return type;
     }
-//    private Type getFuncCallType(SysYParser.LValContext ctx) {
-//        Scope curScope = scopeStack.peek();
-//        String varName = ctx.IDENT().getText();
-//        Type type = curScope.find(varName);
-//        if (type == null) {
-//            return null;
-//        }
-//        if(type instanceof ArrayType) {
-//            int d1 = ctx.exp().size();
-//            int d2 = ((ArrayType)type).getNum_elements();
-//            if(d1 == d2) {
-//                return IntType.getI32();
-//            }
-//            if(d1 > d2) {
-//                return null;
-//            }
-//            return new ArrayType(IntType.getI32(), d2-d1 );
-//        }
-//        return type;
-//    }
 
     private Type getExpType(SysYParser.ExpContext ctx) {
         Scope curScope = scopeStack.peek();
