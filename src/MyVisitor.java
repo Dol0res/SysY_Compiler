@@ -1,4 +1,7 @@
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -247,7 +250,11 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
                 }
             } else {
-                if (funcRetType != getExpType(ctx.exp())) {
+                Type type = getExpType(ctx.exp());
+                if(type!=null && type == ErrorType.getErrorType()){
+                    return null;
+                }
+                if (funcRetType != type) {
                     hasError = true;
                     OutputHelper.printSemanticError(7, ctx.RETURN().getSymbol().getLine());//变量未声明
                     return null;
@@ -293,6 +300,9 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                     for (SysYParser.ParamContext paramContext : ctx.funcRParams().param()) {
                         Type lType = getExpType(paramContext.exp());
                         Type rType = paramsType.get(i);
+                        if(lType==ErrorType.getErrorType()|| rType==ErrorType.getErrorType()){
+                            return null;
+                        }
                         if (!checkType(lType, rType, 8, ctx.IDENT().getSymbol().getLine())) {
                             return null;
                         }
@@ -326,14 +336,17 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 return null;
 
             }
-        } else if (ctx.lVal()!=null) {
+        }
+         else if (ctx.lVal()!=null) {
             Type lValType = getLValType(ctx.lVal());
-
-            if (lValType!=null && lValType != IntType.getI32()) {
-                hasError = true;
-                OutputHelper.printSemanticError(6, ctx.getStart().getLine());
+            if(lValType!=null && lValType == ErrorType.getErrorType()){
                 return null;
             }
+//            if (lValType!=null && lValType != IntType.getI32()) {
+//                hasError = true;
+//                OutputHelper.printSemanticError(6, ctx.getStart().getLine());
+//                return null;
+//            }
         }
         return super.visitExp(ctx);
     }
@@ -348,7 +361,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 //        if(type instanceof FunctionType){
 //            hasError = true;
 //            OutputHelper.printSemanticError(5, ctx.getStart().getLine());
-//            return null;
+//            return ErrorType.getErrorType();
 //        }
         if (type instanceof ArrayType) {
             int d1 = ctx.exp().size();
@@ -451,4 +464,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
         }
         return true;
     }
+
 }
+//7
