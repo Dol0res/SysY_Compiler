@@ -130,13 +130,14 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
     @Override
     public Void visitCond(SysYParser.CondContext ctx) {
+        super.visitCond(ctx);
+
         if (ctx.exp() == null && getCondType(ctx) != IntType.getI32()) {
             hasError = true;
             OutputHelper.printSemanticError(6, ctx.getStart().getLine());
             return null;
         }
-
-        return super.visitCond(ctx);
+        return null;
     }
 
 
