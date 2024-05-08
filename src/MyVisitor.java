@@ -155,6 +155,11 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             curScope.put(varName, IntType.getI32());
             if (ctx.ASSIGN() != null) {     // 包含定义语句
                 Type lType = IntType.getI32();
+                if(ctx.initVal().exp()==null){
+                    hasError = true;
+                    OutputHelper.printSemanticError(5, ctx.getStart().getLine());//变量未声明
+                    return null;
+                }
                 Type rType = getExpType(ctx.initVal().exp());
                 if(rType == ErrorType.getErrorType()){
                     return null;
@@ -163,7 +168,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                     hasError = true;
                     OutputHelper.printSemanticError(11, ctx.getStart().getLine());//变量未声明
                     return null;
-
                 }
                 if (rType == null) {
                     //hasError=true;
@@ -176,7 +180,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
             }
         } else { // 数组
-
             ArrayType arrType = new ArrayType(IntType.getI32(), ctx.constExp().size());
             curScope.put(varName, arrType);
 
@@ -209,6 +212,44 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
         }
         return null;
+    }
+    @Override
+    public Void visitConstDecl(SysYParser.ConstDeclContext ctx) {
+        //String typeName = ctx.bType().getText();
+        Scope curScope = scopeStack.peek();
+        for (SysYParser.ConstDefContext varDefContext : ctx.constDef()) {
+            //Type constType = (Type) curScope.resolve(typeName);
+            Type constType = (IntType.getI32());
+            if (!varDefContext.constExp().isEmpty()) {
+                constType = new ArrayType(constType, varDefContext.constExp().size());
+            }
+            String constName = varDefContext.IDENT().getText();
+            if (curScope.findCurrent(constName) != null) {
+                OutputHelper.printSemanticError(3, varDefContext.getStart().getLine());
+                continue;
+            }
+            if (varDefContext.constInitVal() != null) {
+                Type initValType = new ArrayType(IntType.getI32(), 1);
+                SysYParser.ConstExpContext expContext = varDefContext.constInitVal().constExp();
+                if (expContext != null) {
+                    initValType = getExpType(expContext.exp());
+                }
+                    if (initValType == ErrorType.getErrorType()) {
+                        return null;//
+                    }
+
+                    if (initValType != null) {
+                        if (!checkType(initValType, IntType.getI32(), 5, ctx.getStart().getLine())) {
+                            return null;
+                        }
+                    }
+
+            }
+                curScope.define(constName, constType);
+
+        }
+
+        return super.visitConstDecl(ctx);
     }
     @Override
     public Void visitStmt(SysYParser.StmtContext ctx) {
