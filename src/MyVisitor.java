@@ -219,6 +219,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     public Void visitConstDecl(SysYParser.ConstDeclContext ctx) {
         //String typeName = ctx.bType().getText();
         Scope curScope = scopeStack.peek();
+        super.visitConstDecl(ctx);
+
         for (SysYParser.ConstDefContext varDefContext : ctx.constDef()) {
             //Type constType = (Type) curScope.resolve(typeName);
             Type constType = (IntType.getI32());
