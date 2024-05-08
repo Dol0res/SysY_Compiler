@@ -211,7 +211,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             }
 
         }
-        return null;
+        return super.visitVarDef(ctx);
     }
     @Override
     public Void visitConstDecl(SysYParser.ConstDeclContext ctx) {
