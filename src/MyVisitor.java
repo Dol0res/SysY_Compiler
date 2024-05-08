@@ -145,7 +145,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     public Void visitVarDef(SysYParser.VarDefContext ctx) {
         String varName = ctx.IDENT().getText(); // c or d
         Scope curScope = scopeStack.peek();
-        visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
 
         if (curScope.findCurrent(varName) != null) {
             hasError = true;
@@ -191,6 +190,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 if(ctx.initVal().exp()!=null) {
                     rType = getExpType(ctx.initVal().exp());
                 }
+                visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
+
                 if (lType == null) {
                     hasError = true;
                     OutputHelper.printSemanticError(1, ctx.getStart().getLine());//变量未声明
@@ -209,7 +210,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                         return null;
                     }
                 }
-                visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
             }
 
         }
