@@ -307,6 +307,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
     @Override
     public Void visitExp(SysYParser.ExpContext ctx) {
+        super.visitExp(ctx);
         //funcCall
         if (ctx.IDENT() != null) {
             String funcName = ctx.IDENT().getText();
@@ -323,7 +324,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 OutputHelper.printSemanticError(10, ctx.IDENT().getSymbol().getLine());
                 return null;
 
-                //return super.visitExp(ctx);
             } else {
 
                 FunctionType functionType = (FunctionType) type;
@@ -391,7 +391,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 //                return null;
 //            }
         }
-        return super.visitExp(ctx);
+        //return super.visitExp(ctx);
+        return null;
     }
 
     private Type getLValType(SysYParser.LValContext ctx) {
