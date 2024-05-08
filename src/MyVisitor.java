@@ -156,12 +156,10 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             if (ctx.ASSIGN() != null) {     // 包含定义语句
                 Type lType = IntType.getI32();
                 Type rType = getExpType(ctx.initVal().exp());
-
-                if (lType == null) {
-                    hasError = true;
-                    OutputHelper.printSemanticError(1, ctx.getStart().getLine());//变量未声明
-                    //return null;
-                } else if (lType instanceof FunctionType) {
+                if(rType == ErrorType.getErrorType()){
+                    return null;
+                }
+                if (lType instanceof FunctionType) {
                     hasError = true;
                     OutputHelper.printSemanticError(11, ctx.getStart().getLine());//变量未声明
                     return null;
@@ -466,4 +464,4 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     }
 
 }
-//7
+//5

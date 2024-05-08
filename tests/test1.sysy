@@ -1,4 +1,5 @@
-int a[1];
+int a(){};
 void main(){
-int c=a[0][0];
+int c=a;
+c=a;
 }
