@@ -213,18 +213,17 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     @Override
     public Void visitStmt(SysYParser.StmtContext ctx) {
         if (ctx.ASSIGN() != null) {
-            String varName = ctx.lVal().getText(); // c or d
-            Scope curScope = scopeStack.peek();
-            Type lType = curScope.find(varName);
+            //String varName = ctx.lVal().IDENT().getText(); // c or d
+            //Scope curScope = scopeStack.peek();
+            Type lType = getLValType(ctx.lVal());
             Type rType = getExpType(ctx.exp());
 
-            if (lType == null) {
-                hasError = true;
-                OutputHelper.printSemanticError(1, ctx.getStart().getLine());//变量未声明
-                //return null;
-            } else if (lType instanceof FunctionType) {
+            if (lType instanceof FunctionType) {
                 hasError = true;
                 OutputHelper.printSemanticError(11, ctx.getStart().getLine());//变量未声明
+                return null;
+
+            }else if (lType == ErrorType.getErrorType()) {
                 return null;
 
             }
@@ -354,7 +353,10 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
         String varName = ctx.IDENT().getText();
         Type type = curScope.find(varName);
         if (type == null) {
-            return null;
+                hasError = true;
+                OutputHelper.printSemanticError(1, ctx.getStart().getLine());//变量未声明
+                return ErrorType.getErrorType();
+
         }
 //        if(type instanceof FunctionType){
 //            hasError = true;
