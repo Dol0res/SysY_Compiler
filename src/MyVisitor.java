@@ -262,10 +262,10 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             if (lType instanceof FunctionType) {
                 hasError = true;
                 OutputHelper.printSemanticError(11, ctx.getStart().getLine());//变量未声明
-                return null;
+                //return null;
 
             }else if (lType == ErrorType.getErrorType()) {
-                return null;
+                //return null;
 
             }
             if (rType == null) {
@@ -273,7 +273,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 //hasError=true;
                 // OutputHelper.printSemanticError(1, ctx.ASSIGN().getSymbol().getLine());//变量未声明
             } else if (rType == ErrorType.getErrorType()) {
-                return null;
+                //return null;
             } else {
                 if (!checkType(lType, rType, 5, ctx.getStart().getLine())) {
                     return null;
