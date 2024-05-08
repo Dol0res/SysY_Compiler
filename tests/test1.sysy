@@ -1,13 +1,19 @@
-void a(int c,int c, int c[]){}
+void a(int c){}
 void b(int c[],int d){
 return d+c[0];
 }
-void c()
+int c()
 {
-const int x[0]= 1;
+const int a[2][2] = {{1}};
+a[1][0]=1;
+
 if(1){
+y=2;
+int a;
+1+2;
 return x;
 }
+a(1);
 return;
 }
 int d(int a,int a){//wrong

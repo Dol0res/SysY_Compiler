@@ -238,11 +238,11 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                         return null;//
                     }
 
-                    if (initValType != null) {
-                        if (!checkType(initValType, IntType.getI32(), 5, ctx.getStart().getLine())) {
-                            return null;
-                        }
-                    }
+//                    if (initValType != null) {
+//                        if (!checkType(initValType, IntType.getI32(), 5, ctx.getStart().getLine())) {
+//                            return null;
+//                        }
+//                    }
 
             }
                 curScope.define(constName, constType);
