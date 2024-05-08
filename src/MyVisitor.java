@@ -130,14 +130,13 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
     @Override
     public Void visitCond(SysYParser.CondContext ctx) {
-        super.visitCond(ctx);
-
         if (ctx.exp() == null && getCondType(ctx) != IntType.getI32()) {
             hasError = true;
             OutputHelper.printSemanticError(6, ctx.getStart().getLine());
             return null;
         }
-        return null;
+
+        return super.visitCond(ctx);
     }
 
 
@@ -145,7 +144,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     public Void visitVarDef(SysYParser.VarDefContext ctx) {
         String varName = ctx.IDENT().getText(); // c or d
         Scope curScope = scopeStack.peek();
-        super.visitVarDef(ctx);
+
         if (curScope.findCurrent(varName) != null) {
             hasError = true;
             OutputHelper.printSemanticError(3, ctx.IDENT().getSymbol().getLine());
@@ -190,8 +189,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 if(ctx.initVal().exp()!=null) {
                     rType = getExpType(ctx.initVal().exp());
                 }
-                visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
-
                 if (lType == null) {
                     hasError = true;
                     OutputHelper.printSemanticError(1, ctx.getStart().getLine());//变量未声明
@@ -210,6 +207,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                         return null;
                     }
                 }
+                visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
             }
 
         }
@@ -219,8 +217,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     public Void visitConstDecl(SysYParser.ConstDeclContext ctx) {
         //String typeName = ctx.bType().getText();
         Scope curScope = scopeStack.peek();
-        //super.visitConstDecl(ctx);
-
         for (SysYParser.ConstDefContext varDefContext : ctx.constDef()) {
             //Type constType = (Type) curScope.resolve(typeName);
             Type constType = (IntType.getI32());
@@ -257,8 +253,6 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     }
     @Override
     public Void visitStmt(SysYParser.StmtContext ctx) {
-        //super.visitStmt(ctx);
-
         if (ctx.ASSIGN() != null) {
             //String varName = ctx.lVal().IDENT().getText(); // c or d
             //Scope curScope = scopeStack.peek();
