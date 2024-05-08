@@ -145,7 +145,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     public Void visitVarDef(SysYParser.VarDefContext ctx) {
         String varName = ctx.IDENT().getText(); // c or d
         Scope curScope = scopeStack.peek();
-        super.visitVarDef(ctx);
+
         if (curScope.findCurrent(varName) != null) {
             hasError = true;
             OutputHelper.printSemanticError(3, ctx.IDENT().getSymbol().getLine());
@@ -255,6 +255,8 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
     }
     @Override
     public Void visitStmt(SysYParser.StmtContext ctx) {
+        super.visitStmt(ctx);
+
         if (ctx.ASSIGN() != null) {
             //String varName = ctx.lVal().IDENT().getText(); // c or d
             //Scope curScope = scopeStack.peek();
