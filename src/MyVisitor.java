@@ -70,6 +70,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
 
         if (ctx.funcFParams() != null) {
             paramsTyList = resolveFuncFParams(ctx.funcFParams());
+            visit(ctx.funcFParams());
             // Process function parameters if any
         }
 
@@ -184,6 +185,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             curScope.put(varName, arrType);
 
             if (ctx.ASSIGN() != null) {     // 包含定义语句
+                visitInitVal(ctx.initVal());
                 Type lType = arrType;
                 Type rType = new ArrayType(IntType.getI32(), 1);
                 if(ctx.initVal().exp()!=null) {
@@ -207,7 +209,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                         return null;
                     }
                 }
-                visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
+                //visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
             }
 
         }
