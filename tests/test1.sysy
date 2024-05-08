@@ -1,4 +1,4 @@
-
+void b(){}
 int main(){
-int main;
+return b();
 }

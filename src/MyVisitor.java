@@ -156,7 +156,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             curScope.put(varName, IntType.getI32());
             if (ctx.ASSIGN() != null) {
                 // 包含定义语句
-                visitInitVal(ctx.initVal());
+                //visitInitVal(ctx.initVal());
                 Type lType = IntType.getI32();
                 if(ctx.initVal().exp()==null){
                     hasError = true;
@@ -211,7 +211,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                         return null;
                     }
                 }
-                //visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
+                visitInitVal(ctx.initVal()); // 访问定义语句右侧的表达式，如c=4右侧的4
             }
 
         }
@@ -293,9 +293,9 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 }
             } else {
                 Type type = getExpType(ctx.exp());
-                if(type!=null && type == ErrorType.getErrorType()){
-                    return null;
-                }
+//                if(type!=null && type == ErrorType.getErrorType()){
+//                    return null;
+//                }
                 if (funcRetType != type) {
                     hasError = true;
                     OutputHelper.printSemanticError(7, ctx.RETURN().getSymbol().getLine());//变量未声明
