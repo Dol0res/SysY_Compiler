@@ -445,7 +445,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 return ((FunctionType) type).getRetTy();
             }
             OutputHelper.printSemanticError(2, ctx.getStart().getLine());
-            return null;
+            return ErrorType.getErrorType();
         } else if (ctx.L_PAREN() != null) { // L_PAREN exp R_PAREN
             return getExpType(ctx.exp(0));
         } else if (ctx.unaryOp() != null) { // unaryOp exp
@@ -461,7 +461,9 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 return op1Type;
             }
         }
-        return null;
+        return ErrorType.getErrorType();
+
+        //return null;
     }
 
     private Type getCondType(SysYParser.CondContext ctx) {
