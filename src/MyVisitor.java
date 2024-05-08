@@ -265,7 +265,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
                 return null;
 
             }else if (lType == ErrorType.getErrorType()) {
-                //return null;
+                return null;
 
             }
             if (rType == null) {
@@ -440,6 +440,7 @@ public class MyVisitor extends SysYParserBaseVisitor<Void> {
             if (type instanceof FunctionType) {
                 return ((FunctionType) type).getRetTy();
             }
+            OutputHelper.printSemanticError(2, ctx.getStart().getLine());
             return null;
         } else if (ctx.L_PAREN() != null) { // L_PAREN exp R_PAREN
             return getExpType(ctx.exp(0));
