@@ -1,5 +1,3 @@
-package src;
-
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
@@ -47,22 +45,6 @@ public class Main
         //}
 
     }
-
-//    private static void printSysYTokenInformation(Token t) {
-//        //System.err.println(t);
-//        String tokenName = SysYLexer.VOCABULARY.getSymbolicName(t.getType());
-//        String text =t.getText();
-//        if(Objects.equals(tokenName, "INTEGER_CONST")){
-//            if(text.length()>1 && text.charAt(0)=='0'){
-//                if(text.charAt(1) == 'x' || text.charAt(1) == 'X'){
-//                    text = String.valueOf(Integer.parseInt(text.substring(2), 16));
-//                }else{
-//                    text = String.valueOf(Integer.parseInt(text.substring(1), 8));
-//                }
-//            }
-//        }
-//        System.err.println(tokenName + " " + text + " at Line " + t.getLine()+'.');
-//    }
 
 }
 
