@@ -28,15 +28,14 @@ constInitVal
 constExp
     :exp
     ;
-exp
-   : L_PAREN exp R_PAREN   //括号
-   | lVal  //访问变量或者数组中变量的值
-   | number
-   | IDENT L_PAREN funcRParams? R_PAREN
-   | unaryOp exp   //单目运算符
-   | exp (MUL | DIV | MOD) exp
-   | exp (PLUS | MINUS) exp
-   ;
+exp: L_PAREN exp R_PAREN # parenExp
+	| lVal # lValExp
+	| number # numExp
+	| IDENT L_PAREN funcRParams? R_PAREN # funcCallExp
+	| unaryOp exp # unaryExp
+	| exp (MUL | DIV | MOD) exp # mulExp
+	| exp (PLUS | MINUS) exp # addExp
+	;
 cond
    : exp
    | cond (LT | GT | LE | GE) cond
