@@ -1,4 +1,5 @@
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.PointerPointer;
@@ -11,6 +12,8 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     private final LLVMBuilderRef builder = LLVMCreateBuilder();
     private final LLVMTypeRef i32Type = LLVMInt32Type();
     LLVMValueRef result;
+    boolean is_global = true;
+    LLVMValueRef zero = LLVMConstInt(i32Type, 0, /* signExtend */ 0);
 
     public MyVisitor() {
         LLVMInitializeCore(LLVMGetGlobalPassRegistry());
@@ -18,15 +21,6 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMInitializeNativeAsmPrinter();
         LLVMInitializeNativeAsmParser();
         LLVMInitializeNativeTarget();
-
-//        //创建一个常量,这里是常数0
-//        LLVMValueRef zero = LLVMConstInt(i32Type, 0, /* signExtend */ 0);
-//
-//        //创建名为globalVar的全局变量
-//        LLVMValueRef globalVar = LLVMAddGlobal(module, i32Type, /*globalVarName:String*/"globalVar");
-//
-//        //为全局变量设置初始化器
-//        LLVMSetInitializer(globalVar, /* constantVal:LLVMValueRef*/zero);
 
     }
 
@@ -38,7 +32,8 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitFuncDef(SysYParser.FuncDefContext ctx) {
         //生成返回值类型
         LLVMTypeRef returnType = i32Type;
-
+        boolean is_global_origin = is_global;
+        is_global = false;
         //生成函数参数类型
         PointerPointer<Pointer> argumentTypes = new PointerPointer<>(0);
 
@@ -51,7 +46,11 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMValueRef function = LLVMAddFunction(module, /*functionName:String*/"main", ft);
         LLVMBasicBlockRef block = LLVMAppendBasicBlock(function, "mainEntry");
         LLVMPositionBuilderAtEnd(builder, block);
-        return super.visitFuncDef(ctx);
+        LLVMValueRef r = super.visitFuncDef(ctx);
+        is_global = is_global_origin;
+
+        return r;
+
     }
 
     @Override
@@ -82,6 +81,7 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
         return LLVMConstInt(i32Type, val, 0);
     }
+
     @Override
     public LLVMValueRef visitParenExp(SysYParser.ParenExpContext ctx) {
         return this.visit(ctx.exp());
@@ -110,10 +110,87 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
             return LLVMBuildSRem(builder, valueRef1, valueRef2, "tmp_");
         }
     }
-//    @Override
-//    public LLVMValueRef visitUnaryExp(SysYParser.UnaryExpContext ctx){
-//        LLVMValueRef exp1 = this.visit(ctx.exp());
+
+    @Override
+    public LLVMValueRef visitLValExp(SysYParser.LValExpContext ctx) {
+        LLVMValueRef lValPointer = this.visitLVal(ctx.lVal());
+        return LLVMBuildLoad(builder, lValPointer, ctx.lVal().getText());
+    }
+
+    @Override
+    public LLVMValueRef visitUnaryExp(SysYParser.UnaryExpContext ctx) {
+        LLVMValueRef exp1 = this.visit(ctx.exp());
+        if (ctx.unaryOp().PLUS() != null) {
+            return exp1;
+        } else if (ctx.unaryOp().MINUS() != null) {
+            return LLVMBuildNeg(builder, exp1, "tmp_");
+        } else {
+            // 生成icmp
+            LLVMValueRef tmp_ = LLVMBuildICmp(builder, LLVMIntNE, LLVMConstInt(i32Type, 0, 0), exp1, "tmp_");
+// 生成xor
+            tmp_ = LLVMBuildXor(builder, tmp_, LLVMConstInt(LLVMInt1Type(), 1, 0), "tmp_");
+// 生成zext
+            tmp_ = LLVMBuildZExt(builder, tmp_, i32Type, "tmp_");
+            return tmp_;
+        }
+
+    }
+
+    public String getRuleName(RuleContext ctx) {
+        RuleContext ruleContext = ctx.getRuleContext();
+        int ruleIndex = ruleContext.getRuleIndex();
+        return SysYParser.ruleNames[ruleIndex];
+    }
+
+    @Override
+    public LLVMValueRef visitDecl(SysYParser.DeclContext ctx) {
+        String ruleNameP = getRuleName(ctx.parent);
+        if (ruleNameP.equals("compUnit")) {
+//创建一个常量,这里是常数0
+            LLVMValueRef zero = LLVMConstInt(i32Type, 0, /* signExtend */ 0);
+
+            //创建名为globalVar的全局变量
+            LLVMValueRef globalVar = LLVMAddGlobal(module, i32Type, /*globalVarName:String*/"globalVar");
+
+            //为全局变量设置初始化器
+            LLVMSetInitializer(globalVar, /* constantVal:LLVMValueRef*/zero);
+        }
+
+        return super.visitDecl(ctx);
+    }
+
+    @Override
+    public LLVMValueRef visitVarDecl(SysYParser.VarDeclContext ctx) {
+        if (is_global) {
+            for (SysYParser.VarDefContext varDef : ctx.varDef()) {
+//            if (zeroDef.ASSIGN() != null) {
 //
-//        return LLVMBuildUnary(builder, exp1, exp2, /* varName:String */"result");
-//    }
+//                LLVMValueRef v = visit(zeroDef.initVal().exp());
+//                zero = LLVMConstInt(i32Type, v, /* signExtend */ 0);
+//            }
+                String varName = varDef.IDENT().getText();
+                //创建名为globalVar的全局变量
+                LLVMValueRef globalVar = LLVMAddGlobal(module, i32Type, /*globalVarName:String*/varName);
+
+                //为全局变量设置初始化器
+                LLVMSetInitializer(globalVar, /* constantVal:LLVMValueRef*/zero);
+            }
+        } else {
+            for (SysYParser.VarDefContext varDef : ctx.varDef()) {
+                String varName = varDef.IDENT().getText();
+                //int型变量
+                //申请一块能存放int型的内存
+                LLVMValueRef pointer = LLVMBuildAlloca(builder, i32Type, /*pointerName:String*/varName);
+
+                //将数值存入该内存
+                LLVMBuildStore(builder, zero, pointer);
+
+                //从内存中将值取出
+                LLVMValueRef value = LLVMBuildLoad(builder, pointer, /*varName:String*/"value");
+
+
+            }
+        }
+        return super.visitVarDecl(ctx);
+    }
 }
