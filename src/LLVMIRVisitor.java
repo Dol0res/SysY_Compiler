@@ -93,8 +93,13 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     @Override
     public LLVMValueRef visitLValExp(SysYParser.LValExpContext ctx) {
+        Scope curScope = scopeStack.peek();
+
+        String varName = ctx.lVal().IDENT().getText();
+        LLVMValueRef valueRef = curScope.find(ctx.lVal().IDENT().getText());
         LLVMValueRef lValPointer = this.visitLVal(ctx.lVal());
-        return LLVMBuildLoad(builder, lValPointer, ctx.lVal().getText());
+        LLVMValueRef r =  LLVMBuildLoad(builder, lValPointer, ctx.lVal().getText());
+        return r;
     }
 
     @Override
@@ -102,7 +107,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         Scope curScope = scopeStack.peek();
         String lValName = ctx.IDENT().getText();
         return curScope.find(lValName);
-
     }
 
     @Override
@@ -195,4 +199,30 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
 
     //todo:const
+    @Override
+    public LLVMValueRef visitConstDef(SysYParser.ConstDefContext ctx) {
+        Scope curScope = scopeStack.peek();
+        String varName = ctx.IDENT().getText();
+        LLVMValueRef value = zero;
+
+        if(ctx.ASSIGN()!=null){
+            LLVMValueRef intValue = this.visit(ctx.constInitVal());
+            int signedValue = (int)LLVMConstIntGetSExtValue(intValue);
+
+            value = LLVMConstInt(i32Type, signedValue, /* signExtend */ 0);
+        }
+
+        if (curScope == globalScope) {
+            LLVMValueRef var = LLVMAddGlobal(module, i32Type, /*varName:String*/varName);
+            //为全局变量设置初始化器
+            LLVMSetInitializer(var, /* constantVal:LLVMValueRef*/value);
+            curScope.define(varName,var);
+        } else {
+            LLVMValueRef pointer = LLVMBuildAlloca(builder, i32Type, /*pointerName:String*/varName);
+            //将数值存入该内存
+            LLVMBuildStore(builder, value, pointer);
+            curScope.define(varName,pointer);
+        }
+        return super.visitConstDef(ctx);
+    }
 }

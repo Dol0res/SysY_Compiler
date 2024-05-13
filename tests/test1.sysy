@@ -1,5 +1,7 @@
-int g_var = 2;
+const int g_var = 2;
+
 int main() {
-    int a = 1;
+    int a = g_var;
+
     return a + g_var;
 }
