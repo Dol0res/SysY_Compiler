@@ -1,13 +1,11 @@
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.RuleNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.PointerPointer;
 import org.bytedeco.llvm.LLVM.*;
 
 import static org.bytedeco.llvm.global.LLVM.*;
 
-public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
+public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     private final LLVMModuleRef module = LLVMModuleCreateWithName("module");
     private final LLVMBuilderRef builder = LLVMCreateBuilder();
     private final LLVMTypeRef i32Type = LLVMInt32Type();
@@ -15,7 +13,7 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     boolean is_global = true;
     LLVMValueRef zero = LLVMConstInt(i32Type, 0, /* signExtend */ 0);
 
-    public MyVisitor() {
+    public LLVMIRVisitor() {
         LLVMInitializeCore(LLVMGetGlobalPassRegistry());
         LLVMLinkInMCJIT();
         LLVMInitializeNativeAsmPrinter();
@@ -111,11 +109,12 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         }
     }
 
-    @Override
-    public LLVMValueRef visitLValExp(SysYParser.LValExpContext ctx) {
-        LLVMValueRef lValPointer = this.visitLVal(ctx.lVal());
-        return LLVMBuildLoad(builder, lValPointer, ctx.lVal().getText());
-    }
+//    @Override
+//    public LLVMValueRef visitLValExp(SysYParser.LValExpContext ctx) {
+//        //Scope currentScope =
+//        LLVMValueRef lValPointer = currentScope.resolve(ctx.lVal().IDENT().getText());
+//        return LLVMBuildLoad(builder, lValPointer, ctx.lVal().getText());
+//    }
 
     @Override
     public LLVMValueRef visitUnaryExp(SysYParser.UnaryExpContext ctx) {
@@ -184,11 +183,6 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
                 //将数值存入该内存
                 LLVMBuildStore(builder, zero, pointer);
-
-                //从内存中将值取出
-                LLVMValueRef value = LLVMBuildLoad(builder, pointer, /*varName:String*/"value");
-
-
             }
         }
         return super.visitVarDecl(ctx);

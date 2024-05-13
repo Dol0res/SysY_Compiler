@@ -38,7 +38,7 @@ public class Main {
         SysYParser sysYParser = parser(sysYLexer);
         ParseTree tree = sysYParser.program();
 
-        MyVisitor llvmIRVisitor = new MyVisitor();
+        LLVMIRVisitor llvmIRVisitor = new LLVMIRVisitor();
         llvmIRVisitor.visit(tree);
 
         final BytePointer error = new BytePointer();
