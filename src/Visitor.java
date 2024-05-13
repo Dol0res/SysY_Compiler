@@ -37,10 +37,6 @@ class Visitor extends SysYParserBaseVisitor<Void> {
         return null;
     }
 
-    @Override
-    public Void visitExp(SysYParser.ExpContext ctx) {
-        return super.visitExp(ctx);
-    }
 
     @Override
     public Void visitTerminal(TerminalNode node) {
