@@ -49,8 +49,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMPositionBuilderAtEnd(builder, block);
         LLVMValueRef r = super.visitFuncDef(ctx);
         scopeStack.pop(); // Pop the function scope after visiting its block
-
-
         return r;
 
     }
@@ -172,17 +170,25 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitVarDef(SysYParser.VarDefContext ctx) {
         Scope curScope = scopeStack.peek();
         String varName = ctx.IDENT().getText();
+        LLVMValueRef value = zero;
+
+        if(ctx.ASSIGN()!=null){
+            LLVMValueRef intValue = this.visit(ctx.initVal());
+            int signedValue = (int)LLVMConstIntGetSExtValue(intValue);
+
+            value = LLVMConstInt(i32Type, signedValue, /* signExtend */ 0);
+        }
 
         if (curScope == globalScope) {
             //创建名为globalVar的全局变量
             LLVMValueRef var = LLVMAddGlobal(module, i32Type, /*varName:String*/varName);
             //为全局变量设置初始化器
-            LLVMSetInitializer(var, /* constantVal:LLVMValueRef*/zero);
+            LLVMSetInitializer(var, /* constantVal:LLVMValueRef*/value);
             curScope.define(varName,var);
         } else {
             LLVMValueRef pointer = LLVMBuildAlloca(builder, i32Type, /*pointerName:String*/varName);
             //将数值存入该内存
-            LLVMBuildStore(builder, zero, pointer);
+            LLVMBuildStore(builder, value, pointer);
             curScope.define(varName,pointer);
         }
         return super.visitVarDef(ctx);
