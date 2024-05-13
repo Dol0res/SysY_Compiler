@@ -1,9 +1,11 @@
+import org.bytedeco.llvm.LLVM.LLVMValueRef;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Scope {
     private Scope parentScope;
-    private Map<String, Type> symbols;
+    private Map<String, LLVMValueRef> symbols;
 
     public Scope(Scope parentScope) {
         this.parentScope = parentScope;
@@ -14,12 +16,12 @@ public class Scope {
         return parentScope;
     }
 
-    public void define(String name, Type type) {
+    public void define(String name, LLVMValueRef type) {
         symbols.put(name, type);
     }
 
-    public Type find(String name) {
-        Type symbol = symbols.get(name);
+    public LLVMValueRef find(String name) {
+        LLVMValueRef symbol = symbols.get(name);
         if (symbol != null) {
             return symbol;
         } else if (parentScope != null) {
@@ -28,15 +30,15 @@ public class Scope {
             return null;
         }
     }
-    public Type findCurrent(String name) {
-        Type symbol = symbols.get(name);
+    public LLVMValueRef findCurrent(String name) {
+        LLVMValueRef symbol = symbols.get(name);
         if (symbol != null) {
             return symbol;
         }
         return null;
     }
 
-    public void put(String varName, Type type) {
+    public void put(String varName, LLVMValueRef type) {
         this.symbols.put(varName, type);
     }
 }

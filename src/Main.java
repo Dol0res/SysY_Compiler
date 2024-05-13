@@ -33,7 +33,6 @@ public class Main {
             destPath = args[1];
         }
 
-
         SysYLexer sysYLexer = lexer(srcPath);
         SysYParser sysYParser = parser(sysYLexer);
         ParseTree tree = sysYParser.program();

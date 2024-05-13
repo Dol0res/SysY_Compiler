@@ -3,6 +3,8 @@ import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.PointerPointer;
 import org.bytedeco.llvm.LLVM.*;
 
+import java.util.Stack;
+
 import static org.bytedeco.llvm.global.LLVM.*;
 
 public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
@@ -10,8 +12,9 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     private final LLVMBuilderRef builder = LLVMCreateBuilder();
     private final LLVMTypeRef i32Type = LLVMInt32Type();
     LLVMValueRef result;
-    boolean is_global = true;
+    private Stack<Scope> scopeStack = new Stack<>();
     LLVMValueRef zero = LLVMConstInt(i32Type, 0, /* signExtend */ 0);
+    Scope globalScope = new Scope(null);
 
     public LLVMIRVisitor() {
         LLVMInitializeCore(LLVMGetGlobalPassRegistry());
@@ -30,8 +33,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitFuncDef(SysYParser.FuncDefContext ctx) {
         //生成返回值类型
         LLVMTypeRef returnType = i32Type;
-        boolean is_global_origin = is_global;
-        is_global = false;
+        Scope curScope = scopeStack.peek();
+        scopeStack.push(new Scope(curScope));
         //生成函数参数类型
         PointerPointer<Pointer> argumentTypes = new PointerPointer<>(0);
 
@@ -45,12 +48,40 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMBasicBlockRef block = LLVMAppendBasicBlock(function, "mainEntry");
         LLVMPositionBuilderAtEnd(builder, block);
         LLVMValueRef r = super.visitFuncDef(ctx);
-        is_global = is_global_origin;
+        scopeStack.pop(); // Pop the function scope after visiting its block
+
 
         return r;
 
     }
 
+    @Override
+    public LLVMValueRef visitProgram(SysYParser.ProgramContext ctx) {
+        // Visit the program node
+
+        scopeStack.push(globalScope);
+        super.visitProgram(ctx);
+        scopeStack.pop(); // Pop the global scope after visiting the tree
+        return null;
+    }
+
+    @Override
+    public LLVMValueRef visitBlock(SysYParser.BlockContext ctx) {
+        //新一层作用域
+        //System.out.println(ctx.getText());
+        Scope curScope = scopeStack.peek();
+
+        Scope newScope = new Scope(curScope); // 添加新作用域
+        scopeStack.push(newScope);
+        //some code // 将形参添加到作用域里
+
+        ctx.blockItem().forEach(this::visit); // 依次visit block中的节点
+        //切换回父级作用域
+        scopeStack.pop();
+        //curScope = curScope.parent;
+
+        return null;
+    }
     @Override
     public LLVMValueRef visitStmt(SysYParser.StmtContext ctx) {
         if (ctx.exp() != null) {
@@ -61,6 +92,19 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         }
 
         return null;
+    }
+    @Override
+    public LLVMValueRef visitLValExp(SysYParser.LValExpContext ctx) {
+        LLVMValueRef lValPointer = this.visitLVal(ctx.lVal());
+        return LLVMBuildLoad(builder, lValPointer, ctx.lVal().getText());
+    }
+
+    @Override
+    public LLVMValueRef visitLVal(SysYParser.LValContext ctx) {
+        Scope curScope = scopeStack.peek();
+        String lValName = ctx.IDENT().getText();
+        return curScope.find(lValName);
+
     }
 
     @Override
@@ -79,12 +123,10 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
         return LLVMConstInt(i32Type, val, 0);
     }
-
     @Override
     public LLVMValueRef visitParenExp(SysYParser.ParenExpContext ctx) {
         return this.visit(ctx.exp());
     }
-
     @Override
     public LLVMValueRef visitAddExp(SysYParser.AddExpContext ctx) {
         LLVMValueRef valueRef1 = visit(ctx.exp(0));
@@ -95,7 +137,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
             return LLVMBuildSub(builder, valueRef1, valueRef2, "tmp_");
         }
     }
-
     @Override
     public LLVMValueRef visitMulExp(SysYParser.MulExpContext ctx) {
         LLVMValueRef valueRef1 = visit(ctx.exp(0));
@@ -108,14 +149,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
             return LLVMBuildSRem(builder, valueRef1, valueRef2, "tmp_");
         }
     }
-
-//    @Override
-//    public LLVMValueRef visitLValExp(SysYParser.LValExpContext ctx) {
-//        //Scope currentScope =
-//        LLVMValueRef lValPointer = currentScope.resolve(ctx.lVal().IDENT().getText());
-//        return LLVMBuildLoad(builder, lValPointer, ctx.lVal().getText());
-//    }
-
     @Override
     public LLVMValueRef visitUnaryExp(SysYParser.UnaryExpContext ctx) {
         LLVMValueRef exp1 = this.visit(ctx.exp());
@@ -135,56 +168,25 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
     }
 
-    public String getRuleName(RuleContext ctx) {
-        RuleContext ruleContext = ctx.getRuleContext();
-        int ruleIndex = ruleContext.getRuleIndex();
-        return SysYParser.ruleNames[ruleIndex];
-    }
-
     @Override
-    public LLVMValueRef visitDecl(SysYParser.DeclContext ctx) {
-        String ruleNameP = getRuleName(ctx.parent);
-        if (ruleNameP.equals("compUnit")) {
-//创建一个常量,这里是常数0
-            LLVMValueRef zero = LLVMConstInt(i32Type, 0, /* signExtend */ 0);
+    public LLVMValueRef visitVarDef(SysYParser.VarDefContext ctx) {
+        Scope curScope = scopeStack.peek();
+        String varName = ctx.IDENT().getText();
 
+        if (curScope == globalScope) {
             //创建名为globalVar的全局变量
-            LLVMValueRef globalVar = LLVMAddGlobal(module, i32Type, /*globalVarName:String*/"globalVar");
-
+            LLVMValueRef var = LLVMAddGlobal(module, i32Type, /*varName:String*/varName);
             //为全局变量设置初始化器
-            LLVMSetInitializer(globalVar, /* constantVal:LLVMValueRef*/zero);
-        }
-
-        return super.visitDecl(ctx);
-    }
-
-    @Override
-    public LLVMValueRef visitVarDecl(SysYParser.VarDeclContext ctx) {
-        if (is_global) {
-            for (SysYParser.VarDefContext varDef : ctx.varDef()) {
-//            if (zeroDef.ASSIGN() != null) {
-//
-//                LLVMValueRef v = visit(zeroDef.initVal().exp());
-//                zero = LLVMConstInt(i32Type, v, /* signExtend */ 0);
-//            }
-                String varName = varDef.IDENT().getText();
-                //创建名为globalVar的全局变量
-                LLVMValueRef globalVar = LLVMAddGlobal(module, i32Type, /*globalVarName:String*/varName);
-
-                //为全局变量设置初始化器
-                LLVMSetInitializer(globalVar, /* constantVal:LLVMValueRef*/zero);
-            }
+            LLVMSetInitializer(var, /* constantVal:LLVMValueRef*/zero);
+            curScope.define(varName,var);
         } else {
-            for (SysYParser.VarDefContext varDef : ctx.varDef()) {
-                String varName = varDef.IDENT().getText();
-                //int型变量
-                //申请一块能存放int型的内存
-                LLVMValueRef pointer = LLVMBuildAlloca(builder, i32Type, /*pointerName:String*/varName);
-
-                //将数值存入该内存
-                LLVMBuildStore(builder, zero, pointer);
-            }
+            LLVMValueRef pointer = LLVMBuildAlloca(builder, i32Type, /*pointerName:String*/varName);
+            //将数值存入该内存
+            LLVMBuildStore(builder, zero, pointer);
+            curScope.define(varName,pointer);
         }
-        return super.visitVarDecl(ctx);
+        return super.visitVarDef(ctx);
     }
+
+    //todo:const
 }
