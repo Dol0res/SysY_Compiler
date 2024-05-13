@@ -65,4 +65,55 @@ public class MyVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
         return null;
     }
+
+    @Override
+    public LLVMValueRef visitNumExp(SysYParser.NumExpContext ctx) {
+        String num = ctx.number().getText();
+        int val;
+
+        //处理十六进制和八进制
+        if (num.startsWith("0x") || num.startsWith("0X")) {
+            val = Integer.parseInt(num.substring(2), 16);
+        } else if (num.startsWith("0") && num.length() > 1) {
+            val = Integer.parseInt(num, 8);
+        } else {
+            val = Integer.parseInt(num);
+        }
+
+        return LLVMConstInt(i32Type, val, 0);
+    }
+    @Override
+    public LLVMValueRef visitParenExp(SysYParser.ParenExpContext ctx) {
+        return this.visit(ctx.exp());
+    }
+
+    @Override
+    public LLVMValueRef visitAddExp(SysYParser.AddExpContext ctx) {
+        LLVMValueRef valueRef1 = visit(ctx.exp(0));
+        LLVMValueRef valueRef2 = visit(ctx.exp(1));
+        if (ctx.PLUS() != null) {
+            return LLVMBuildAdd(builder, valueRef1, valueRef2, "tmp_");
+        } else {
+            return LLVMBuildSub(builder, valueRef1, valueRef2, "tmp_");
+        }
+    }
+
+    @Override
+    public LLVMValueRef visitMulExp(SysYParser.MulExpContext ctx) {
+        LLVMValueRef valueRef1 = visit(ctx.exp(0));
+        LLVMValueRef valueRef2 = visit(ctx.exp(1));
+        if (ctx.MUL() != null) {
+            return LLVMBuildMul(builder, valueRef1, valueRef2, "tmp_");
+        } else if (ctx.DIV() != null) {
+            return LLVMBuildSDiv(builder, valueRef1, valueRef2, "tmp_");
+        } else {
+            return LLVMBuildSRem(builder, valueRef1, valueRef2, "tmp_");
+        }
+    }
+//    @Override
+//    public LLVMValueRef visitUnaryExp(SysYParser.UnaryExpContext ctx){
+//        LLVMValueRef exp1 = this.visit(ctx.exp());
+//
+//        return LLVMBuildUnary(builder, exp1, exp2, /* varName:String */"result");
+//    }
 }
