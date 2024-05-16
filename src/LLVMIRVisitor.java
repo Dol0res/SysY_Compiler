@@ -176,11 +176,12 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         String varName = ctx.IDENT().getText();
         LLVMValueRef value = zero;
 
-        if(ctx.ASSIGN()!=null){
-            LLVMValueRef intValue = this.visit(ctx.initVal());
-            int signedValue = (int)LLVMConstIntGetSExtValue(intValue);
-
-            value = LLVMConstInt(i32Type, signedValue, /* signExtend */ 0);
+        if(ctx.ASSIGN()!=null){//todo
+//            LLVMValueRef value = this.visit(ctx.initVal());
+            value = this.visit(ctx.initVal());
+//            int signedValue = (int)LLVMConstIntGetSExtValue(intValue);
+//
+//            value = LLVMConstInt(i32Type, signedValue, /* signExtend */ 0);
         }
 
         if (curScope == globalScope) {
