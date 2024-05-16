@@ -1,13 +1,29 @@
 ; ModuleID = 'module'
 source_filename = "module"
 
-@g_var = global i32 2
+@a = global i32 1
+@b = global i32 2
 
 define i32 @main() {
 mainEntry:
-  %g_var = load i32, i32* @g_var, align 4
-  %a = alloca i32, align 4
-  store i32 %g_var, i32* %a, align 4
-  %a1 = load i32, i32* %a, align 4
-  ret i32 %a1
+  %a = load i32, i32* @a, align 4
+  %b = load i32, i32* @b, align 4
+  %tmp_ = add i32 %a, %b
+  %tmp_1 = sub i32 0, %tmp_
+  %c = alloca i32, align 4
+  store i32 %tmp_1, i32* %c, align 4
+  %a2 = load i32, i32* @a, align 4
+  %b3 = load i32, i32* @b, align 4
+  %tmp_4 = add i32 %a2, %b3
+  %tmp_5 = icmp ne i32 0, %tmp_4
+  %tmp_6 = xor i1 %tmp_5, true
+  %tmp_7 = zext i1 %tmp_6 to i32
+  %d = alloca i32, align 4
+  store i32 %tmp_7, i32* %d, align 4
+  %a8 = load i32, i32* @a, align 4
+  %b9 = load i32, i32* @b, align 4
+  %tmp_10 = add i32 %a8, %b9
+  %e = alloca i32, align 4
+  store i32 %tmp_10, i32* %e, align 4
+  ret i32 0
 }
