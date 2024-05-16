@@ -67,7 +67,7 @@ varDecl
    :bType varDef (COMMA varDef)* SEMICOLON
    ;
 varDef
-   : IDENT (L_BRACKT constExp R_BRACKT)* (ASSIGN initVal)?
+   :IDENT (L_BRACKT constExp R_BRACKT)* | IDENT (L_BRACKT constExp R_BRACKT)* ASSIGN initVal
    ;
 initVal
     :exp | L_BRACE (initVal (COMMA initVal)*)? R_BRACE

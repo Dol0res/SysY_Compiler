@@ -7,12 +7,11 @@ source_filename = "module"
 
 define i32 @main() {
 mainEntry:
+  %c = alloca i32, align 4
   %a = load i32, i32* @a, align 4
   %b = load i32, i32* @b, align 4
   %tmp_ = add i32 %a, %b
   %tmp_1 = sub i32 0, %tmp_
-  %c = alloca i32, align 4
-  store i32 %tmp_1, i32* %c, align 4
   %a2 = load i32, i32* @a, align 4
   %b3 = load i32, i32* @b, align 4
   %tmp_4 = add i32 %a2, %b3
