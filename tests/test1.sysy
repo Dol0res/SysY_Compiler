@@ -1,6 +1,8 @@
-const int a = 1;
-const int b = 2;
+int a,b,c;
+
 int main() {
+const int c = -(a + b);
+const int d = !(a + b);
 const int e = +(a + b);
 return e;
 }
