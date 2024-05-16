@@ -3,5 +3,5 @@ const int g_var = 2;
 int main() {
     int a = g_var;
 
-    return a + g_var;
+    return a;
 }

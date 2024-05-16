@@ -195,7 +195,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
             LLVMBuildStore(builder, value, pointer);
             curScope.define(varName,pointer);
         }
-        return super.visitVarDef(ctx);
+        //return super.visitVarDef(ctx);
+        return value;
     }
 
     //todo:const

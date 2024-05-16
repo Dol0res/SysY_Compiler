@@ -41,7 +41,7 @@ public class Main {
         llvmIRVisitor.visit(tree);
 
         final BytePointer error = new BytePointer();
-        if (LLVMPrintModuleToFile(llvmIRVisitor.getModule(), destPath, error) != 0) {    // moudle 是你自定义的 LLVMModuleRef 对象
+        if (LLVMPrintModuleToFile(llvmIRVisitor.getModule(), destPath, error) != 0) {
             LLVMDisposeMessage(error);
         }
     }
