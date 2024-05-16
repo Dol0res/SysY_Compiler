@@ -1,7 +1,7 @@
 int a,b,c;
 
 int main() {
-int c;
+const int c = 0, d = 1;
 c = -(a + b);
 const int d = !(a + b);
 const int e = +(a + b);

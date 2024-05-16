@@ -199,24 +199,23 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitConstDef(SysYParser.ConstDefContext ctx) {
         Scope curScope = scopeStack.peek();
         String varName = ctx.IDENT().getText();
-        LLVMValueRef value = zero;
+        LLVMValueRef value = this.visit(ctx.constInitVal());
 
-        if(ctx.ASSIGN()!=null){
-            value = this.visit(ctx.constInitVal());
-//            LLVMValueRef intValue = this.visit(ctx.constInitVal());
-//            int signedValue = (int)LLVMConstIntGetSExtValue(intValue);
-//
-//            value = LLVMConstInt(i32Type, signedValue, /* signExtend */ 0);
-        }
+//        if(ctx.ASSIGN()!=null){
+////            LLVMValueRef intValue = this.visit(ctx.constInitVal());
+////            int signedValue = (int)LLVMConstIntGetSExtValue(intValue);
+////
+////            value = LLVMConstInt(i32Type, signedValue, /* signExtend */ 0);
+//        }
 
         if (curScope == globalScope) {
             LLVMValueRef var = LLVMAddGlobal(module, i32Type, /*varName:String*/varName);
+
             //为全局变量设置初始化器
             LLVMSetInitializer(var, /* constantVal:LLVMValueRef*/value);
             curScope.define(varName,var);
         } else {
             LLVMValueRef pointer = LLVMBuildAlloca(builder, i32Type, /*pointerName:String*/varName);
-            //将数值存入该内存
             LLVMBuildStore(builder, value, pointer);
             curScope.define(varName,pointer);
         }
