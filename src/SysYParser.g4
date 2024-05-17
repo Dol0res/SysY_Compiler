@@ -23,7 +23,8 @@ constDef
     :IDENT (L_BRACKT constExp R_BRACKT)* ASSIGN constInitVal
     ;
 constInitVal
-    :constExp | L_BRACE (constInitVal (COMMA constInitVal)*)? R_BRACE
+    :constExp
+    | L_BRACE (constInitVal (COMMA constInitVal)*)? R_BRACE
     ;
 constExp
     :exp
@@ -70,7 +71,8 @@ varDef
    :IDENT (L_BRACKT constExp R_BRACKT)* | IDENT (L_BRACKT constExp R_BRACKT)* ASSIGN initVal
    ;
 initVal
-    :exp | L_BRACE (initVal (COMMA initVal)*)? R_BRACE
+    :exp
+    | L_BRACE (initVal (COMMA initVal)*)? R_BRACE
     ;
 funcDef
     :funcType IDENT L_PAREN (funcFParams)? R_PAREN block

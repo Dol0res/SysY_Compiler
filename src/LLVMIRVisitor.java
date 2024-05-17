@@ -12,10 +12,9 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     private final LLVMBuilderRef builder = LLVMCreateBuilder();
     private final LLVMTypeRef i32Type = LLVMInt32Type();
     LLVMValueRef result;
-    private Stack<Scope> scopeStack = new Stack<>();
     LLVMValueRef zero = LLVMConstInt(i32Type, 0, /* signExtend */ 0);
-    Scope globalScope = new Scope(null);
-
+    private Scope globalScope = null;
+    private Scope curScope = null;
     public LLVMIRVisitor() {
         LLVMInitializeCore(LLVMGetGlobalPassRegistry());
         LLVMLinkInMCJIT();
@@ -33,8 +32,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitFuncDef(SysYParser.FuncDefContext ctx) {
         //生成返回值类型
         LLVMTypeRef returnType = i32Type;
-        Scope curScope = scopeStack.peek();
-        scopeStack.push(new Scope(curScope));
+        Scope lastScope = curScope;
+        curScope = new Scope(curScope);
         //生成函数参数类型
         PointerPointer<Pointer> argumentTypes = new PointerPointer<>(0);
 
@@ -48,7 +47,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMBasicBlockRef block = LLVMAppendBasicBlock(function, "mainEntry");
         LLVMPositionBuilderAtEnd(builder, block);
         LLVMValueRef r = super.visitFuncDef(ctx);
-        scopeStack.pop(); // Pop the function scope after visiting its block
+        curScope=lastScope;
         return r;
 
     }
@@ -56,10 +55,9 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     @Override
     public LLVMValueRef visitProgram(SysYParser.ProgramContext ctx) {
         // Visit the program node
-
-        scopeStack.push(globalScope);
+        globalScope = new Scope(null);
+        curScope = globalScope;
         super.visitProgram(ctx);
-        scopeStack.pop(); // Pop the global scope after visiting the tree
         return null;
     }
 
@@ -67,16 +65,13 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitBlock(SysYParser.BlockContext ctx) {
         //新一层作用域
         //System.out.println(ctx.getText());
-        Scope curScope = scopeStack.peek();
 
-        Scope newScope = new Scope(curScope); // 添加新作用域
-        scopeStack.push(newScope);
+        curScope = new Scope(curScope); // 添加新作用域
         //some code // 将形参添加到作用域里
 
         ctx.blockItem().forEach(this::visit); // 依次visit block中的节点
         //切换回父级作用域
-        scopeStack.pop();
-        //curScope = curScope.parent;
+        curScope = curScope.getParentScope();
 
         return null;
     }
@@ -100,7 +95,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
     @Override
     public LLVMValueRef visitLVal(SysYParser.LValContext ctx) {
-        Scope curScope = scopeStack.peek();
         String lValName = ctx.IDENT().getText();
         return curScope.find(lValName);
     }
@@ -168,7 +162,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
     @Override
     public LLVMValueRef visitVarDef(SysYParser.VarDefContext ctx) {
-        Scope curScope = scopeStack.peek();
         String varName = ctx.IDENT().getText();
         LLVMValueRef value = zero;
 
@@ -197,7 +190,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
     @Override
     public LLVMValueRef visitConstDef(SysYParser.ConstDefContext ctx) {
-        Scope curScope = scopeStack.peek();
         String varName = ctx.IDENT().getText();
         LLVMValueRef value = this.visit(ctx.constInitVal());
 
