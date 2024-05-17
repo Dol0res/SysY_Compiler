@@ -1,6 +1,7 @@
 int a,b,c;
+
 int main() {
-c = -(a-( - b))%1;
-const int d = !(a + b);
-return b;
+int c;
+c = -(a + b);
+return c;
 }

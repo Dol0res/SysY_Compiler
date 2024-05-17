@@ -83,7 +83,12 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         if (ctx.RETURN() != null) {
             LLVMBuildRet(builder, result);
         }
-
+        if(ctx.ASSIGN()!=null){
+            LLVMValueRef pointer = this.visitLVal(ctx.lVal());
+            LLVMValueRef value = this.visit(ctx.exp());
+            LLVMBuildStore(builder, value, pointer);
+        }
+        //将数值存入该内存
         return null;
     }
     @Override
