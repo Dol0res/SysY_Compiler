@@ -34,20 +34,37 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMTypeRef returnType = i32Type;
         Scope lastScope = curScope;
         curScope = new Scope(curScope);
+        String functionName = ctx.IDENT().getText();
+        int argumentCount = 0 ;
+        if(ctx.funcFParams()!=null) argumentCount = ctx.funcFParams().funcFParam().size();
         //生成函数参数类型
-        PointerPointer<Pointer> argumentTypes = new PointerPointer<>(0);
+        PointerPointer<Pointer> argumentTypes = new PointerPointer<>(argumentCount);
+
+        for(int i=0;i<argumentCount;i++) {
+            argumentTypes.put(i, i32Type);
+        }
 
         //生成函数类型
-        LLVMTypeRef ft = LLVMFunctionType(returnType, argumentTypes, /* argumentCount */ 0, /* isVariadic */ 0);
+        LLVMTypeRef ft = LLVMFunctionType(returnType, argumentTypes, /* argumentCount */ argumentCount, /* isVariadic */ 0);
         //若仅需一个参数也可以使用如下方式直接生成函数类型
-        //ft = LLVMFunctionType(returnType, i32Type, /* argumentCount */ 0, /* isVariadic */ 0);
 
         //生成函数，即向之前创建的module中添加函数
-        LLVMValueRef function = LLVMAddFunction(module, /*functionName:String*/"main", ft);
-        LLVMBasicBlockRef block = LLVMAppendBasicBlock(function, "mainEntry");
+        LLVMValueRef function = LLVMAddFunction(module, /*functionName:String*/functionName, ft);
+
+        LLVMBasicBlockRef block = LLVMAppendBasicBlock(function, functionName+"Entry");
         LLVMPositionBuilderAtEnd(builder, block);
+        for(int i=0;i<argumentCount;i++) {
+            String varName = ctx.funcFParams().funcFParam(i).IDENT().getText();
+            LLVMValueRef arg1 = LLVMBuildAlloca(builder, i32Type, varName);
+            //LLVMSetValueName(arg1, varName);
+            LLVMValueRef argValue = LLVMGetParam(function, i);
+            LLVMBuildStore(builder, argValue, arg1);
+            curScope.define(varName, arg1);
+        }
         LLVMValueRef r = super.visitFuncDef(ctx);
+
         curScope=lastScope;
+        curScope.define(functionName,function);
         return r;
 
     }
@@ -77,8 +94,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     @Override
     public LLVMValueRef visitStmt(SysYParser.StmtContext ctx) {
-
-
         if(ctx.ASSIGN()!=null){
             LLVMValueRef pointer = this.visitLVal(ctx.lVal());
             LLVMValueRef value = this.visit(ctx.exp());
@@ -120,6 +135,23 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         }
 
         return LLVMConstInt(i32Type, val, 0);
+    }
+    @Override
+    public LLVMValueRef visitFuncCallExp(SysYParser.FuncCallExpContext ctx){
+        String functionName = ctx.IDENT().getText();
+        LLVMValueRef function = curScope.find(functionName);
+        PointerPointer<Pointer> args = null;
+        int argsCount = 0;
+        if (ctx.funcRParams() != null) {
+            argsCount = ctx.funcRParams().param().size();
+            args = new PointerPointer<>(argsCount);
+            for (int i = 0; i < argsCount; ++i) {
+                SysYParser.ParamContext paramContext = ctx.funcRParams().param(i);
+                SysYParser.ExpContext expContext = paramContext.exp();
+                args.put(i, this.visit(expContext));
+            }
+        }
+        return LLVMBuildCall(builder, function, args, argsCount, "");
     }
     @Override
     public LLVMValueRef visitParenExp(SysYParser.ParenExpContext ctx) {

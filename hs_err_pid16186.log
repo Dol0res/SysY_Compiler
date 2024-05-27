@@ -1,0 +1,142 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007f7f6a15bd0c, pid=16186, tid=16192
+#
+# JRE version: OpenJDK Runtime Environment (11.0.22+7) (build 11.0.22+7-post-Ubuntu-0ubuntu220.04.1)
+# Java VM: OpenJDK 64-Bit Server VM (11.0.22+7-post-Ubuntu-0ubuntu220.04.1, mixed mode, sharing, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libLLVM-13.so+0xc2fd0c]  LLVMBuildCall+0x1c
+#
+# No core dump will be written. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugs.launchpad.net/ubuntu/+source/openjdk-lts
+# The crash happened outside the Java Virtual Machine in native code.
+# See problematic frame for where to report the bug.
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:60845,suspend=y,server=n -javaagent:/home/w/.cache/JetBrains/RemoteDev/dist/2b05049c6fa27_ideaIU-232.9921.28/plugins/java/lib/rt/debugger-agent.jar -Dfile.encoding=UTF-8 Main
+
+Host: 12th Gen Intel(R) Core(TM) i5-1240P, 16 cores, 7G, Ubuntu 20.04.6 LTS
+Time: Mon May 27 15:37:04 2024 CST elapsed time: 134.494769 seconds (0d 0h 2m 14s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007f7fe801c000):  JavaThread "main" [_thread_in_native, id=16192, stack(0x00007f7fefe54000,0x00007f7feff55000)]
+
+Stack: [0x00007f7fefe54000,0x00007f7feff55000],  sp=0x00007f7feff52a10,  free space=1018k
+Native frames: (J=compiled Java code, A=aot compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [libLLVM-13.so+0xc2fd0c]  LLVMBuildCall+0x1c
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  org.bytedeco.llvm.global.LLVM.LLVMBuildCall(Lorg/bytedeco/llvm/LLVM/LLVMBuilderRef;Lorg/bytedeco/llvm/LLVM/LLVMValueRef;Lorg/bytedeco/javacpp/PointerPointer;ILjava/lang/String;)Lorg/bytedeco/llvm/LLVM/LLVMValueRef;+0
+j  LLVMIRVisitor.visitFuncCallExp(LSysYParser$FuncCallExpContext;)Lorg/bytedeco/llvm/LLVM/LLVMValueRef;+121
+j  LLVMIRVisitor.visitFuncCallExp(LSysYParser$FuncCallExpContext;)Ljava/lang/Object;+2
+j  SysYParser$FuncCallExpContext.accept(Lorg/antlr/v4/runtime/tree/ParseTreeVisitor;)Ljava/lang/Object;+12
+j  org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(Lorg/antlr/v4/runtime/tree/ParseTree;)Ljava/lang/Object;+2
+j  LLVMIRVisitor.visitStmt(LSysYParser$StmtContext;)Lorg/bytedeco/llvm/LLVM/LLVMValueRef;+54
+j  LLVMIRVisitor.visitStmt(LSysYParser$StmtContext;)Ljava/lang/Object;+2
+j  SysYParser$StmtContext.accept(Lorg/antlr/v4/runtime/tree/ParseTreeVisitor;)Ljava/lang/Object;+12
+j  org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visitChildren(Lorg/antlr/v4/runtime/tree/RuleNode;)Ljava/lang/Object;+46
+j  SysYParserBaseVisitor.visitBlockItem(LSysYParser$BlockItemContext;)Ljava/lang/Object;+2
+j  SysYParser$BlockItemContext.accept(Lorg/antlr/v4/runtime/tree/ParseTreeVisitor;)Ljava/lang/Object;+12
+j  org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(Lorg/antlr/v4/runtime/tree/ParseTree;)Ljava/lang/Object;+2
+j  LLVMIRVisitor$$Lambda$30.accept(Ljava/lang/Object;)V+11
+j  java.util.ArrayList.forEach(Ljava/util/function/Consumer;)V+46 java.base@11.0.22
+j  LLVMIRVisitor.visitBlock(LSysYParser$BlockContext;)Lorg/bytedeco/llvm/LLVM/LLVMValueRef;+25
+j  LLVMIRVisitor.visitBlock(LSysYParser$BlockContext;)Ljava/lang/Object;+2
+j  SysYParser$BlockContext.accept(Lorg/antlr/v4/runtime/tree/ParseTreeVisitor;)Ljava/lang/Object;+12
+j  org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visitChildren(Lorg/antlr/v4/runtime/tree/RuleNode;)Ljava/lang/Object;+46
+j  SysYParserBaseVisitor.visitFuncDef(LSysYParser$FuncDefContext;)Ljava/lang/Object;+2
+j  LLVMIRVisitor.visitFuncDef(LSysYParser$FuncDefContext;)Lorg/bytedeco/llvm/LLVM/LLVMValueRef;+232
+j  LLVMIRVisitor.visitFuncDef(LSysYParser$FuncDefContext;)Ljava/lang/Object;+2
+j  SysYParser$FuncDefContext.accept(Lorg/antlr/v4/runtime/tree/ParseTreeVisitor;)Ljava/lang/Object;+12
+j  org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visitChildren(Lorg/antlr/v4/runtime/tree/RuleNode;)Ljava/lang/Object;+46
+j  SysYParserBaseVisitor.visitCompUnit(LSysYParser$CompUnitContext;)Ljava/lang/Object;+2
+j  SysYParser$CompUnitContext.accept(Lorg/antlr/v4/runtime/tree/ParseTreeVisitor;)Ljava/lang/Object;+12
+j  org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visitChildren(Lorg/antlr/v4/runtime/tree/RuleNode;)Ljava/lang/Object;+46
+j  SysYParserBaseVisitor.visitProgram(LSysYParser$ProgramContext;)Ljava/lang/Object;+2
+j  LLVMIRVisitor.visitProgram(LSysYParser$ProgramContext;)Lorg/bytedeco/llvm/LLVM/LLVMValueRef;+22
+j  LLVMIRVisitor.visitProgram(LSysYParser$ProgramContext;)Ljava/lang/Object;+2
+j  SysYParser$ProgramContext.accept(Lorg/antlr/v4/runtime/tree/ParseTreeVisitor;)Ljava/lang/Object;+12
+j  org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visit(Lorg/antlr/v4/runtime/tree/ParseTree;)Ljava/lang/Object;+2
+j  Main.main([Ljava/lang/String;)V+62
+v  ~StubRoutines::call_stub
+
+siginfo: si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), si_addr: 0x0000000000000000
+
+Register to memory mapping:
+
+RAX=0x00007f7fe801e630 points into unknown readable memory: 0x0000000000000000 | 00 00 00 00 00 00 00 00
+RBX=0x00007f7fe84a08d0 points into unknown readable memory: 0x00007f7fe84a08e0 | e0 08 4a e8 7f 7f 00 00
+RCX=0x0000000000000001 is an unknown value
+RDX=0x00007f7fe801e610 points into unknown readable memory: 0x00007f7fe801e670 | 70 e6 01 e8 7f 7f 00 00
+RSP=0x00007f7feff52a10 is pointing into the stack for thread: 0x00007f7fe801c000
+RBP=0x00007f7fe801c348 points into unknown readable memory: 0x00007f7ff14dcb40 | 40 cb 4d f1 7f 7f 00 00
+RSI=0x0 is NULL
+RDI=0x0000000000000101 is an unknown value
+R8 =0x00007f7fe801e630 points into unknown readable memory: 0x0000000000000000 | 00 00 00 00 00 00 00 00
+R9 =0x00007f7fe801c000 is a thread
+R10=0x0 is NULL
+R11=0x00007f7f6a15bcf0: LLVMBuildCall+0x0000000000000000 in /home/w/.javacpp/cache/llvm-13.0.1-1.5.7-linux-x86_64.jar/org/bytedeco/llvm/linux-x86_64/libLLVM-13.so at 0x00007f7f6952c000
+R12=0x0 is NULL
+R13=0x00007f7fe84a08d0 points into unknown readable memory: 0x00007f7fe84a08e0 | e0 08 4a e8 7f 7f 00 00
+R14=0x00007f7fe801e610 points into unknown readable memory: 0x00007f7fe801e670 | 70 e6 01 e8 7f 7f 00 00
+R15=0x00007f7fe801e630 points into unknown readable memory: 0x0000000000000000 | 00 00 00 00 00 00 00 00
+
+
+Registers:
+RAX=0x00007f7fe801e630, RBX=0x00007f7fe84a08d0, RCX=0x0000000000000001, RDX=0x00007f7fe801e610
+RSP=0x00007f7feff52a10, RBP=0x00007f7fe801c348, RSI=0x0000000000000000, RDI=0x0000000000000101
+R8 =0x00007f7fe801e630, R9 =0x00007f7fe801c000, R10=0x0000000000000000, R11=0x00007f7f6a15bcf0
+R12=0x0000000000000000, R13=0x00007f7fe84a08d0, R14=0x00007f7fe801e610, R15=0x00007f7fe801e630
+RIP=0x00007f7f6a15bd0c, EFLAGS=0x0000000000010202, CSGSFS=0x002b000000000033, ERR=0x0000000000000004
+  TRAPNO=0x000000000000000e
+
+Top of Stack: (sp=0x00007f7feff52a10)
+0x00007f7feff52a10:   00007f7fe801c000 000000008d49f478
+0x00007f7feff52a20:   0000000000000000 00007f7feff53ac0
+0x00007f7feff52a30:   00007f7feff52aa0 00007f7ff0b991ba
+0x00007f7feff52a40:   00007f7ff1539960 00007f7fe801c000 
+
+Instructions: (pc=0x00007f7f6a15bd0c)
+0x00007f7f6a15bc0c:   98 00 00 00 0f b6 c8 83 e9 12 83 f9 01 77 0b 48
+0x00007f7f6a15bc1c:   8b 42 10 48 8b 00 0f b6 40 08 3c 06 77 25 48 8b
+0x00007f7f6a15bc2c:   55 58 44 8b 6d 60 48 85 d2 74 0d be 03 00 00 00
+0x00007f7f6a15bc3c:   4c 89 e7 e8 fc e1 0d 00 44 89 ee 4c 89 e7 e8 41
+0x00007f7f6a15bc4c:   95 08 00 48 8b 7d 50 48 8b 4d 30 48 89 e2 4c 89
+0x00007f7f6a15bc5c:   e6 4c 8b 45 38 48 8b 07 ff 50 10 48 8b 5d 00 8b
+0x00007f7f6a15bc6c:   6d 08 48 c1 e5 04 48 01 dd 48 39 eb 74 1d 66 0f
+0x00007f7f6a15bc7c:   1f 44 00 00 48 8b 53 08 8b 33 4c 89 e7 48 83 c3
+0x00007f7f6a15bc8c:   10 e8 ae e1 0d 00 48 39 dd 75 e9 48 83 c4 68 4c
+0x00007f7f6a15bc9c:   89 e0 5b 5d 41 5c 41 5d c3 0f 1f 00 48 8b 52 18
+0x00007f7f6a15bcac:   0f b6 42 08 3c 11 0f 85 58 ff ff ff 48 8b 52 18
+0x00007f7f6a15bcbc:   0f b6 42 08 3c 11 74 e4 e9 47 ff ff ff 0f 1f 80
+0x00007f7f6a15bccc:   00 00 00 00 3c 05 0f 85 77 ff ff ff 41 0f b7 44
+0x00007f7f6a15bcdc:   24 12 e9 fd fe ff ff 66 2e 0f 1f 84 00 00 00 00
+0x00007f7f6a15bcec:   00 0f 1f 00 41 57 49 89 f2 41 56 41 55 41 54 55
+0x00007f7f6a15bcfc:   53 48 89 fb bf 01 01 00 00 48 81 ec 98 00 00 00
+0x00007f7f6a15bd0c:   48 8b 06 41 80 38 00 48 89 14 24 4c 8b 58 18 66
+0x00007f7f6a15bd1c:   89 7c 24 50 74 0a 4c 89 44 24 30 c6 44 24 50 03
+0x00007f7f6a15bd2c:   4c 8b 43 70 48 8b 6b 68 be 01 01 00 00 41 89 c9
+0x00007f7f6a15bd3c:   66 89 b4 24 80 00 00 00 4d 89 c5 49 c1 e5 05 49
+0x00007f7f6a15bd4c:   01 ed 49 39 ed 0f 84 89 02 00 00 48 89 ea 31 f6
+0x00007f7f6a15bd5c:   0f 1f 40 00 48 8b 42 10 48 2b 42 08 48 83 c2 20
+0x00007f7f6a15bd6c:   48 c1 f8 03 01 c6 49 39 d5 75 e9 83 c1 01 44 89
+0x00007f7f6a15bd7c:   c2 bf 50 00 00 00 4c 89 54 24 28 01 ce c1 e2 04
+0x00007f7f6a15bd8c:   4c 89 4c 24 20 49 89 ee 4c 89 5c 24 18 4c 89 44
+0x00007f7f6a15bd9c:   24 10 89 4c 24 08 e8 f9 d6 12 00 4c 8b 44 24 10
+0x00007f7f6a15bdac:   4c 8b 4c 24 20 48 89 ee 4c 8b 54 24 28 4c 8b 5c
+0x00007f7f6a15bdbc:   24 18 49 89 c4 8b 4c 24 08 4d 89 c7 4c 89 c8 45
+0x00007f7f6a15bdcc:   31 c0 66 90 48 8b 56 10 48 2b 56 08 48 83 c6 20
+0x00007f7f6a15bddc:   48 c1 fa 03 41 01 d0 49 39 f5 75 e8 41 01 c8 31
+0x00007f7f6a15bdec:   c9 0f 1f 00 48 8b 55 10 48 2b 55 08 48 83 c5 20
+0x00007f7f6a15bdfc:   48 c1 fa 03 01 d1 49 39 ed 75 e9 49 01 c9 49 8b 
+
+
+Stack slot to memory mapping:
+stack at sp + 0 slots: 0x00007f7fe801c000 is a thread
+stack at sp + 1 slots: 
