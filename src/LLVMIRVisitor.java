@@ -130,17 +130,29 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         //将数值存入该内存
         return null;
     }
-//    @Override
-//    public LLVMValueRef visitCond(SysYParser.CondContext ctx){
-//        if(ctx.exp()!=null) {
-//            return visit(ctx.exp());
-//        }
-//
-//        visit(ctx.cond(0));
-//        visit(ctx.cond(1));
-//        return null;
-//
-//    }
+
+    @Override
+    public LLVMValueRef visitExpCond(SysYParser.ExpCondContext ctx) {
+        return visit(ctx.exp());
+    }
+
+    @Override
+    public LLVMValueRef visitAndCond(SysYParser.AndCondContext ctx) {
+        LLVMValueRef l = visit(ctx.cond(0));
+        return l;
+    }
+    @Override
+    public LLVMValueRef visitEqCond(SysYParser.EqCondContext ctx) {
+        LLVMValueRef l = visit(ctx.cond(0));
+        LLVMValueRef r = visit(ctx.cond(1));
+        if(ctx.EQ()!=null) {
+            return LLVMBuildICmp(builder, LLVMIntEQ, l, r, "eq");
+        }else{
+            return LLVMBuildICmp(builder, LLVMIntNE, l, r, "neq");
+        }
+    }
+
+
     @Override
     public LLVMValueRef visitLValExp(SysYParser.LValExpContext ctx) {
         LLVMValueRef lValPointer = this.visitLVal(ctx.lVal());

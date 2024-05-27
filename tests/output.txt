@@ -6,7 +6,9 @@ source_filename = "module"
 define i32 @main() {
 mainEntry:
   %a = load i32, i32* @a, align 4
-  br i1 true, label %true, label %false
+  %neq = icmp ne i32 %a, 10
+  %cmp_result = icmp ne i32 0, i1 %neq
+  br i1 %cmp_result, label %true, label %false
 
 true:                                             ; preds = %mainEntry
   store i32 2, i32* @a, align 4
