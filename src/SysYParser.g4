@@ -38,11 +38,11 @@ exp: L_PAREN exp R_PAREN # parenExp
 	| exp (PLUS | MINUS) exp # addExp
 	;
 cond
-   : exp
-   | cond (LT | GT | LE | GE) cond
-   | cond (EQ | NEQ) cond
-   | cond AND cond
-   | cond OR cond
+   : exp # expCond
+   | cond (LT | GT | LE | GE) cond # ltCond
+   | cond (EQ | NEQ) cond # eqCond
+   | cond AND cond # andCond
+   | cond OR cond # orCond
    ;
 lVal
    : IDENT (L_BRACKT exp R_BRACKT)*

@@ -23,7 +23,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMInitializeNativeTarget();
 
     }
-
+    LLVMValueRef function=null;
     public LLVMModuleRef getModule() {
         return module;
     }
@@ -43,13 +43,11 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         for(int i=0;i<argumentCount;i++) {
             argumentTypes.put(i, i32Type);
         }
-
         //生成函数类型
         LLVMTypeRef ft = LLVMFunctionType(returnType, argumentTypes, /* argumentCount */ argumentCount, /* isVariadic */ 0);
         //若仅需一个参数也可以使用如下方式直接生成函数类型
-
         //生成函数，即向之前创建的module中添加函数
-        LLVMValueRef function = LLVMAddFunction(module, /*functionName:String*/functionName, ft);
+        function = LLVMAddFunction(module, /*functionName:String*/functionName, ft);
 
         LLVMBasicBlockRef block = LLVMAppendBasicBlock(function, functionName+"Entry");
         LLVMPositionBuilderAtEnd(builder, block);
@@ -82,7 +80,6 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitBlock(SysYParser.BlockContext ctx) {
         //新一层作用域
         //System.out.println(ctx.getText());
-
         curScope = new Scope(curScope); // 添加新作用域
         //some code // 将形参添加到作用域里
 
@@ -104,9 +101,46 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         if (ctx.RETURN() != null) {
             LLVMBuildRet(builder, result);
         }
+        if(ctx.block()!=null){
+            return visit(ctx.block());
+        }
+        if (ctx.IF() != null) {
+            LLVMValueRef condVal = this.visit(ctx.cond());
+            LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal, "cmp_result");
+            LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
+            LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
+            LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
+
+            LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
+
+            LLVMPositionBuilderAtEnd(builder, trueBlock);
+            this.visit(ctx.stmt(0));
+            LLVMBuildBr(builder, afterBlock);
+
+            LLVMPositionBuilderAtEnd(builder, falseBlock);
+            if (ctx.ELSE() != null) {
+                this.visit(ctx.stmt(1));
+            }
+            LLVMBuildBr(builder, afterBlock);
+
+            LLVMPositionBuilderAtEnd(builder, afterBlock);
+            return null;
+            //LLVMBasicBlockRef block1 = LLVMAppendBasicBlock(function, /*blockName:String*/"true");
+        }
         //将数值存入该内存
         return null;
     }
+//    @Override
+//    public LLVMValueRef visitCond(SysYParser.CondContext ctx){
+//        if(ctx.exp()!=null) {
+//            return visit(ctx.exp());
+//        }
+//
+//        visit(ctx.cond(0));
+//        visit(ctx.cond(1));
+//        return null;
+//
+//    }
     @Override
     public LLVMValueRef visitLValExp(SysYParser.LValExpContext ctx) {
         LLVMValueRef lValPointer = this.visitLVal(ctx.lVal());
