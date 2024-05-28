@@ -206,17 +206,19 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     @Override
     public LLVMValueRef visitLtCond(SysYParser.LtCondContext ctx) {
-        LLVMValueRef l = visit(ctx.cond(0));
-        LLVMValueRef r = visit(ctx.cond(1));
-        if(ctx.LT()!=null) {
-            return LLVMBuildICmp(builder, LLVMIntULT, l, r, "eq");
-        }else if(ctx.GT()!=null){
-            return LLVMBuildICmp(builder, LLVMIntUGT, l, r, "neq");
-        }else if(ctx.LE()!=null){
-            return LLVMBuildICmp(builder, LLVMIntULE, l, r, "neq");
-        }else {
-            return LLVMBuildICmp(builder, LLVMIntUGE, l, r, "neq");
+        LLVMValueRef lVal = this.visit(ctx.cond(0));
+        LLVMValueRef rVal = this.visit(ctx.cond(1));
+        LLVMValueRef cmpResult = null;
+        if (ctx.LT() != null) {
+            cmpResult = LLVMBuildICmp(builder, LLVMIntSLT, lVal, rVal, "LT");
+        } else if (ctx.GT() != null) {
+            cmpResult = LLVMBuildICmp(builder, LLVMIntSGT, lVal, rVal, "GT");
+        } else if (ctx.LE() != null) {
+            cmpResult = LLVMBuildICmp(builder, LLVMIntSLE, lVal, rVal, "LE");
+        } else {
+            cmpResult = LLVMBuildICmp(builder, LLVMIntSGE, lVal, rVal, "GE");
         }
+        return LLVMBuildZExt(builder, cmpResult, i32Type, "ext");
     }
 
 
