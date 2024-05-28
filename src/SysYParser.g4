@@ -94,12 +94,12 @@ blockItem
     :decl | stmt
     ;
 stmt
-    :lVal ASSIGN exp SEMICOLON
-    |exp? SEMICOLON
-    |block
-    |IF L_PAREN cond R_PAREN stmt (ELSE stmt)?
-    |WHILE L_PAREN cond R_PAREN stmt
-    |BREAK SEMICOLON
-    |CONTINUE SEMICOLON
-    |RETURN (exp)? SEMICOLON
+    :lVal ASSIGN exp SEMICOLON # assignStmt
+    |exp? SEMICOLON # expStmt
+    |block # blockStmt
+    |IF L_PAREN cond R_PAREN stmt (ELSE stmt)? # ifStmt
+    |WHILE L_PAREN cond R_PAREN stmt #whileStmt
+    |BREAK SEMICOLON # breakStmt
+    |CONTINUE SEMICOLON # continueStmt
+    |RETURN (exp)? SEMICOLON # returnStmt
     ;

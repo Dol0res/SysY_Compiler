@@ -127,6 +127,29 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
             return null;
             //LLVMBasicBlockRef block1 = LLVMAppendBasicBlock(function, /*blockName:String*/"true");
         }
+        if (ctx.While() != null) {
+            LLVMValueRef condVal = this.visit(ctx.cond());
+            LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal, "cmp_result");
+            LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
+            LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
+            LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
+
+            LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
+
+            LLVMPositionBuilderAtEnd(builder, trueBlock);
+            this.visit(ctx.stmt(0));
+            LLVMBuildBr(builder, afterBlock);
+
+            LLVMPositionBuilderAtEnd(builder, falseBlock);
+            if (ctx.ELSE() != null) {
+                this.visit(ctx.stmt(1));
+            }
+            LLVMBuildBr(builder, afterBlock);
+
+            LLVMPositionBuilderAtEnd(builder, afterBlock);
+            return null;
+            //LLVMBasicBlockRef block1 = LLVMAppendBasicBlock(function, /*blockName:String*/"true");
+        }
         //将数值存入该内存
         return null;
     }
@@ -139,6 +162,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     @Override
     public LLVMValueRef visitAndCond(SysYParser.AndCondContext ctx) {
         LLVMValueRef l = visit(ctx.cond(0));
+        //todo
         return l;
     }
     @Override
@@ -149,6 +173,20 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
             return LLVMBuildICmp(builder, LLVMIntEQ, l, r, "eq");
         }else{
             return LLVMBuildICmp(builder, LLVMIntNE, l, r, "neq");
+        }
+    }
+    @Override
+    public LLVMValueRef visitLtCond(SysYParser.LtCondContext ctx) {
+        LLVMValueRef l = visit(ctx.cond(0));
+        LLVMValueRef r = visit(ctx.cond(1));
+        if(ctx.LT()!=null) {
+            return LLVMBuildICmp(builder, LLVMIntULT, l, r, "eq");
+        }else if(ctx.GT()!=null){
+            return LLVMBuildICmp(builder, LLVMIntUGT, l, r, "neq");
+        }else if(ctx.LE()!=null){
+            return LLVMBuildICmp(builder, LLVMIntULE, l, r, "neq");
+        }else {
+            return LLVMBuildICmp(builder, LLVMIntUGE, l, r, "neq");
         }
     }
 
