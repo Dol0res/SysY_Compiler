@@ -1,10 +1,4 @@
-int a;
-int f(int a,int b){
-    return a;
-}
 
-void main(){
-    int a = 1;
-    a=f(a,a);
+void f(int a){
     return ;
 }
