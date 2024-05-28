@@ -117,8 +117,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     @Override
     public LLVMValueRef visitIfStmt(SysYParser.IfStmtContext ctx) {
         LLVMValueRef condVal = this.visit(ctx.cond());
-        LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
-        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal2, "cmp_result");
+        //LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
+        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal, "cmp_result");
         LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
         LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
         LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
@@ -148,8 +148,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         //condition
         LLVMPositionBuilderAtEnd(builder, conditionBlock);
         LLVMValueRef condVal = this.visit(ctx.cond());
-        LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
-        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal2, "cmp_result");
+        //LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
+        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal, "cmp_result");
 
         LLVMBuildCondBr(builder, cmpResult, whileBody, entry);
 
@@ -194,13 +194,15 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     @Override
     public LLVMValueRef visitEqCond(SysYParser.EqCondContext ctx) {
-        LLVMValueRef l = visit(ctx.cond(0));
-        LLVMValueRef r = visit(ctx.cond(1));
-        if(ctx.EQ()!=null) {
-            return LLVMBuildICmp(builder, LLVMIntEQ, l, r, "eq");
-        }else{
-            return LLVMBuildICmp(builder, LLVMIntNE, l, r, "neq");
+        LLVMValueRef lVal = this.visit(ctx.cond(0));
+        LLVMValueRef rVal = this.visit(ctx.cond(1));
+        LLVMValueRef cmpResult = null;
+        if (ctx.NEQ() != null) {
+            cmpResult = LLVMBuildICmp(builder, LLVMIntNE, lVal, rVal, "NEQ");
+        } else {
+            cmpResult = LLVMBuildICmp(builder, LLVMIntEQ, lVal, rVal, "EQ");
         }
+        return LLVMBuildZExt(builder, cmpResult, i32Type, "ext");
     }
     @Override
     public LLVMValueRef visitLtCond(SysYParser.LtCondContext ctx) {
