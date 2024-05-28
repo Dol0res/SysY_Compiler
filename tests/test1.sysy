@@ -1,8 +1,10 @@
-int main(){
-    int a=0;
-    int count=0;
-    while(a<=0 && a==0){
-        a=a-1;
-    }
-    return count;
+int a;
+int f(int a,int b){
+    return a;
+}
+
+void main(){
+    int a = 1;
+    a=f(a,a);
+    return ;
 }

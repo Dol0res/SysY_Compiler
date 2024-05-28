@@ -1,34 +1,25 @@
 ; ModuleID = 'module'
 source_filename = "module"
 
-define i32 @main() {
+@a = global i32 0
+
+define i32 @f(i32 %0, i32 %1) {
+fEntry:
+  %a = alloca i32, align 4
+  store i32 %0, i32* %a, align 4
+  %b = alloca i32, align 4
+  store i32 %1, i32* %b, align 4
+  %a1 = load i32, i32* %a, align 4
+  ret i32 %a1
+}
+
+define void @main() {
 mainEntry:
   %a = alloca i32, align 4
-  store i32 0, i32* %a, align 4
-  %count = alloca i32, align 4
-  store i32 0, i32* %count, align 4
-  br label %whileCondition
-
-whileCondition:                                   ; preds = %whileBody, %mainEntry
+  store i32 1, i32* %a, align 4
   %a1 = load i32, i32* %a, align 4
-  %LE = icmp sle i32 %a1, 0
-  %ext = zext i1 %LE to i32
-  br i32 %ext, label %nextCondition, label %entry
-
-whileBody:                                        ; preds = %nextCondition
-  %a4 = load i32, i32* %a, align 4
-  %tmp_ = sub i32 %a4, 1
-  store i32 %tmp_, i32* %a, align 4
-  br label %whileCondition
-
-entry:                                            ; preds = %nextCondition, %whileCondition
-  %count5 = load i32, i32* %count, align 4
-  ret i32 %count5
-
-nextCondition:                                    ; preds = %whileCondition
   %a2 = load i32, i32* %a, align 4
-  %EQ = icmp eq i32 %a2, 0
-  %ext3 = zext i1 %EQ to i32
-  %cmp_result = icmp ne i32 0, %ext3
-  br i1 %cmp_result, label %whileBody, label %entry
+  %0 = call i32 @f(i32 %a1, i32 %a2)
+  store i32 %0, i32* %a, align 4
+  ret void
 }

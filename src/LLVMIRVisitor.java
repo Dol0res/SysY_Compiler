@@ -11,6 +11,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     private final LLVMModuleRef module = LLVMModuleCreateWithName("module");
     private final LLVMBuilderRef builder = LLVMCreateBuilder();
     private final LLVMTypeRef i32Type = LLVMInt32Type();
+    private final LLVMTypeRef voidType = LLVMVoidType();
+
     LLVMValueRef result;
     LLVMValueRef zero = LLVMConstInt(i32Type, 0, /* signExtend */ 0);
     private Scope globalScope = null;
@@ -35,6 +37,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitFuncDef(SysYParser.FuncDefContext ctx) {
         //生成返回值类型
         LLVMTypeRef returnType = i32Type;
+        if(ctx.funcType().VOID()!=null)returnType = voidType;
         Scope lastScope = curScope;
         curScope = new Scope(curScope);
         String functionName = ctx.IDENT().getText();
@@ -106,9 +109,13 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     @Override
     public LLVMValueRef visitReturnStmt(SysYParser.ReturnStmtContext ctx) {
-        result = visit(ctx.exp());
-        LLVMBuildRet(builder, result);
-        return result;
+        result = null;
+        if(ctx.exp()!=null) {
+            result = visit(ctx.exp());
+        }
+            LLVMBuildRet(builder, result);
+            return result;
+
     }
     @Override
     public LLVMValueRef visitBlockStmt(SysYParser.BlockStmtContext ctx) {
