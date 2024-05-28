@@ -90,67 +90,79 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         return null;
     }
     @Override
-    public LLVMValueRef visitStmt(SysYParser.StmtContext ctx) {
-        if(ctx.ASSIGN()!=null){
-            LLVMValueRef pointer = this.visitLVal(ctx.lVal());
-            LLVMValueRef value = this.visit(ctx.exp());
-            LLVMBuildStore(builder, value, pointer);
-        } else if (ctx.exp() != null) {
-            result = visit(ctx.exp());
+    public LLVMValueRef visitAssignStmt(SysYParser.AssignStmtContext ctx) {
+        LLVMValueRef pointer = this.visitLVal(ctx.lVal());
+        LLVMValueRef value = this.visit(ctx.exp());
+        LLVMBuildStore(builder, value, pointer);
+        return value;
+    }
+    @Override
+    public LLVMValueRef visitExpStmt(SysYParser.ExpStmtContext ctx) {
+        result = visit(ctx.exp());
+        return result;
+    }
+    @Override
+    public LLVMValueRef visitReturnStmt(SysYParser.ReturnStmtContext ctx) {
+        result = visit(ctx.exp());
+        LLVMBuildRet(builder, result);
+        return result;
+    }
+    @Override
+    public LLVMValueRef visitBlockStmt(SysYParser.BlockStmtContext ctx) {
+        return visit(ctx.block());
+    }
+    @Override
+    public LLVMValueRef visitIfStmt(SysYParser.IfStmtContext ctx) {
+        LLVMValueRef condVal = this.visit(ctx.cond());
+        LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
+        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal2, "cmp_result");
+        LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
+        LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
+        LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
+
+        LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
+
+        LLVMPositionBuilderAtEnd(builder, trueBlock);
+        this.visit(ctx.stmt(0));
+        LLVMBuildBr(builder, afterBlock);
+
+        LLVMPositionBuilderAtEnd(builder, falseBlock);
+        if (ctx.ELSE() != null) {
+            this.visit(ctx.stmt(1));
         }
-        if (ctx.RETURN() != null) {
-            LLVMBuildRet(builder, result);
-        }
-        if(ctx.block()!=null){
-            return visit(ctx.block());
-        }
-        if (ctx.IF() != null) {
-            LLVMValueRef condVal = this.visit(ctx.cond());
-            LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal, "cmp_result");
-            LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
-            LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
-            LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
+        LLVMBuildBr(builder, afterBlock);
 
-            LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
+        LLVMPositionBuilderAtEnd(builder, afterBlock);
+        return null;
+    }
+    @Override
+    public LLVMValueRef visitWhileStmt(SysYParser.WhileStmtContext ctx) {
+        LLVMValueRef condVal = this.visit(ctx.cond());
+        LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
+        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal2, "cmp_result");
+        LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
+        LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
+        LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
 
-            LLVMPositionBuilderAtEnd(builder, trueBlock);
-            this.visit(ctx.stmt(0));
-            LLVMBuildBr(builder, afterBlock);
+        LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
 
-            LLVMPositionBuilderAtEnd(builder, falseBlock);
-            if (ctx.ELSE() != null) {
-                this.visit(ctx.stmt(1));
-            }
-            LLVMBuildBr(builder, afterBlock);
+        LLVMPositionBuilderAtEnd(builder, trueBlock);
+        this.visit(ctx.stmt());
+        LLVMBuildBr(builder, afterBlock);
 
-            LLVMPositionBuilderAtEnd(builder, afterBlock);
-            return null;
-            //LLVMBasicBlockRef block1 = LLVMAppendBasicBlock(function, /*blockName:String*/"true");
-        }
-        if (ctx.While() != null) {
-            LLVMValueRef condVal = this.visit(ctx.cond());
-            LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal, "cmp_result");
-            LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
-            LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
-            LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
+        LLVMPositionBuilderAtEnd(builder, falseBlock);
 
-            LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
+        LLVMBuildBr(builder, afterBlock);
 
-            LLVMPositionBuilderAtEnd(builder, trueBlock);
-            this.visit(ctx.stmt(0));
-            LLVMBuildBr(builder, afterBlock);
-
-            LLVMPositionBuilderAtEnd(builder, falseBlock);
-            if (ctx.ELSE() != null) {
-                this.visit(ctx.stmt(1));
-            }
-            LLVMBuildBr(builder, afterBlock);
-
-            LLVMPositionBuilderAtEnd(builder, afterBlock);
-            return null;
-            //LLVMBasicBlockRef block1 = LLVMAppendBasicBlock(function, /*blockName:String*/"true");
-        }
-        //将数值存入该内存
+        LLVMPositionBuilderAtEnd(builder, afterBlock);
+        return null;
+    }
+    @Override
+    public LLVMValueRef visitBreakStmt(SysYParser.BreakStmtContext ctx) {
+        return null;
+    }
+    @Override
+    public LLVMValueRef visitContinueStmt(SysYParser.ContinueStmtContext ctx) {
         return null;
     }
 

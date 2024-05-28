@@ -7,7 +7,8 @@ define i32 @main() {
 mainEntry:
   %a = load i32, i32* @a, align 4
   %neq = icmp ne i32 %a, 10
-  %cmp_result = icmp ne i32 0, i1 %neq
+  %tmp = zext i1 %neq to i32
+  %cmp_result = icmp ne i32 0, %tmp
   br i1 %cmp_result, label %true, label %false
 
 true:                                             ; preds = %mainEntry
