@@ -24,6 +24,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
     }
     LLVMValueRef function=null;
+    LLVMBasicBlockRef entry=null;
     public LLVMModuleRef getModule() {
         return module;
     }
@@ -137,28 +138,30 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     @Override
     public LLVMValueRef visitWhileStmt(SysYParser.WhileStmtContext ctx) {
+        LLVMBasicBlockRef conditionBlock = LLVMAppendBasicBlock(function, "whileCondition");
+        LLVMBuildBr(builder, conditionBlock);
+
+        //condition
+        LLVMPositionBuilderAtEnd(builder, conditionBlock);
         LLVMValueRef condVal = this.visit(ctx.cond());
         LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
         LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal2, "cmp_result");
-        LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
-        LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
-        LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
+        LLVMBasicBlockRef whileBody = LLVMAppendBasicBlock(function, "whileBody");
+        entry = LLVMAppendBasicBlock(function, "entry");
+        LLVMBuildCondBr(builder, cmpResult, whileBody, entry);
 
-        LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
-
-        LLVMPositionBuilderAtEnd(builder, trueBlock);
+        //whileBody
+        LLVMPositionBuilderAtEnd(builder, whileBody);
         this.visit(ctx.stmt());
-        LLVMBuildBr(builder, afterBlock);
+        LLVMBuildBr(builder, conditionBlock);
 
-        LLVMPositionBuilderAtEnd(builder, falseBlock);
-
-        LLVMBuildBr(builder, afterBlock);
-
-        LLVMPositionBuilderAtEnd(builder, afterBlock);
+        //entry
+        LLVMPositionBuilderAtEnd(builder, entry);
         return null;
     }
     @Override
     public LLVMValueRef visitBreakStmt(SysYParser.BreakStmtContext ctx) {
+        LLVMBuildBr(builder, entry);
         return null;
     }
     @Override

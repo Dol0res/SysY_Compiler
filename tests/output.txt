@@ -1,25 +1,45 @@
 ; ModuleID = 'module'
 source_filename = "module"
 
-@a = global i32 10
-
 define i32 @main() {
 mainEntry:
-  %a = load i32, i32* @a, align 4
-  %neq = icmp ne i32 %a, 10
+  %a = alloca i32, align 4
+  store i32 0, i32* %a, align 4
+  %count = alloca i32, align 4
+  store i32 0, i32* %count, align 4
+  br label %whileCondition
+
+whileCondition:                                   ; preds = %entry8, %mainEntry
+  %a1 = load i32, i32* %a, align 4
+  %neq = icmp ule i32 %a1, 0
   %tmp = zext i1 %neq to i32
   %cmp_result = icmp ne i32 0, %tmp
-  br i1 %cmp_result, label %true, label %false
+  br i1 %cmp_result, label %whileBody, label %entry
 
-true:                                             ; preds = %mainEntry
-  store i32 2, i32* @a, align 4
+whileBody:                                        ; preds = %whileCondition
+  %a2 = load i32, i32* %a, align 4
+  %tmp_ = sub i32 %a2, 1
+  store i32 %tmp_, i32* %a, align 4
+  %count3 = load i32, i32* %count, align 4
+  %tmp_4 = add i32 %count3, 1
+  store i32 %tmp_4, i32* %count, align 4
+  %a5 = load i32, i32* %a, align 4
+  %eq = icmp ult i32 %a5, -20
+  %tmp6 = zext i1 %eq to i32
+  %cmp_result7 = icmp ne i32 0, %tmp6
+  br i1 %cmp_result7, label %true, label %false
+
+entry:                                            ; preds = %true, %whileCondition
+  %count9 = load i32, i32* %count, align 4
+  ret i32 %count9
+
+true:                                             ; preds = %whileBody
   br label %entry
+  br label %entry8
 
-false:                                            ; preds = %mainEntry
-  store i32 20, i32* @a, align 4
-  br label %entry
+false:                                            ; preds = %whileBody
+  br label %entry8
 
-entry:                                            ; preds = %false, %true
-  %a1 = load i32, i32* @a, align 4
-  ret i32 %a1
+entry8:                                           ; preds = %false, %true
+  br label %whileCondition
 }
