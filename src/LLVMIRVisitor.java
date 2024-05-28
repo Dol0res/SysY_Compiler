@@ -117,13 +117,13 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     @Override
     public LLVMValueRef visitIfStmt(SysYParser.IfStmtContext ctx) {
         LLVMValueRef condVal = this.visit(ctx.cond());
-//        LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
-//        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal2, "cmp_result");
+        LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
+        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal2, "cmp_result");
         LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
         LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
         LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
 
-        LLVMBuildCondBr(builder, condVal, trueBlock, falseBlock);
+        LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
 
         LLVMPositionBuilderAtEnd(builder, trueBlock);
         this.visit(ctx.stmt(0));
