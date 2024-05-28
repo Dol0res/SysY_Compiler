@@ -182,10 +182,11 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     public LLVMValueRef visitAndCond(SysYParser.AndCondContext ctx) {
         LLVMValueRef l = visit(ctx.cond(0));
         LLVMBasicBlockRef nextBlock = LLVMAppendBasicBlock(function, "nextCondition");
-
-        //LLVMValueRef condVal2 =  LLVMBuildZExt(builder, l, i32Type, "tmp");
-        //LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, l, "cmp_result");
-        LLVMBuildCondBr(builder, l, nextBlock, entry);
+        if(ctx.AND()!=null) {
+            LLVMBuildCondBr(builder, l, nextBlock, entry);
+        }else{
+            LLVMBuildCondBr(builder, l, whileBody, nextBlock);
+        }
         LLVMPositionBuilderAtEnd(builder, nextBlock);
         LLVMValueRef r = visit(ctx.cond(1));
 

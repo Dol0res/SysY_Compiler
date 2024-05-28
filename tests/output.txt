@@ -9,37 +9,26 @@ mainEntry:
   store i32 0, i32* %count, align 4
   br label %whileCondition
 
-whileCondition:                                   ; preds = %entry8, %mainEntry
+whileCondition:                                   ; preds = %whileBody, %mainEntry
   %a1 = load i32, i32* %a, align 4
   %LE = icmp sle i32 %a1, 0
   %ext = zext i1 %LE to i32
-  %cmp_result = icmp ne i32 0, %ext
-  br i1 %cmp_result, label %whileBody, label %entry
+  br i32 %ext, label %nextCondition, label %entry
 
-whileBody:                                        ; preds = %whileCondition
-  %a2 = load i32, i32* %a, align 4
-  %tmp_ = sub i32 %a2, 1
+whileBody:                                        ; preds = %nextCondition
+  %a4 = load i32, i32* %a, align 4
+  %tmp_ = sub i32 %a4, 1
   store i32 %tmp_, i32* %a, align 4
-  %count3 = load i32, i32* %count, align 4
-  %tmp_4 = add i32 %count3, 1
-  store i32 %tmp_4, i32* %count, align 4
-  %a5 = load i32, i32* %a, align 4
-  %LT = icmp slt i32 %a5, -20
-  %ext6 = zext i1 %LT to i32
-  %cmp_result7 = icmp ne i32 0, %ext6
-  br i1 %cmp_result7, label %true, label %false
-
-entry:                                            ; preds = %true, %whileCondition
-  %count9 = load i32, i32* %count, align 4
-  ret i32 %count9
-
-true:                                             ; preds = %whileBody
-  br label %entry
-  br label %entry8
-
-false:                                            ; preds = %whileBody
-  br label %entry8
-
-entry8:                                           ; preds = %false, %true
   br label %whileCondition
+
+entry:                                            ; preds = %nextCondition, %whileCondition
+  %count5 = load i32, i32* %count, align 4
+  ret i32 %count5
+
+nextCondition:                                    ; preds = %whileCondition
+  %a2 = load i32, i32* %a, align 4
+  %EQ = icmp eq i32 %a2, 0
+  %ext3 = zext i1 %EQ to i32
+  %cmp_result = icmp ne i32 0, %ext3
+  br i1 %cmp_result, label %whileBody, label %entry
 }
