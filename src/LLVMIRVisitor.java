@@ -26,9 +26,12 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
     }
     LLVMValueRef function=null;
-    LLVMBasicBlockRef entry=null;
-    LLVMBasicBlockRef conditionBlock = null;
-    LLVMBasicBlockRef whileBody=null;
+    //LLVMBasicBlockRef entry=null;
+//    LLVMBasicBlockRef conditionBlock = null;
+    //LLVMBasicBlockRef whileBody=null;
+    private final Stack<LLVMBasicBlockRef> entryStack = new Stack<>();
+    private final Stack<LLVMBasicBlockRef> whileBodyStack = new Stack<>();
+    private final Stack<LLVMBasicBlockRef> conditionBlockStack = new Stack<>();
     public LLVMModuleRef getModule() {
         return module;
     }
@@ -112,8 +115,11 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         result = null;
         if(ctx.exp()!=null) {
             result = visit(ctx.exp());
-        }
             LLVMBuildRet(builder, result);
+
+        }else {
+            LLVMBuildRetVoid(builder);
+        }
             return result;
 
     }
@@ -147,11 +153,13 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     @Override
     public LLVMValueRef visitWhileStmt(SysYParser.WhileStmtContext ctx) {
-        conditionBlock = LLVMAppendBasicBlock(function, "whileCondition");
+        LLVMBasicBlockRef conditionBlock = LLVMAppendBasicBlock(function, "whileCondition");
         LLVMBuildBr(builder, conditionBlock);
-        whileBody = LLVMAppendBasicBlock(function, "whileBody");
-        entry = LLVMAppendBasicBlock(function, "entry");
-
+        LLVMBasicBlockRef whileBody = LLVMAppendBasicBlock(function, "whileBody");
+        LLVMBasicBlockRef entry = LLVMAppendBasicBlock(function, "entry");
+        entryStack.push(entry);
+        whileBodyStack.push(whileBody);
+        conditionBlockStack.push(conditionBlock);
         //condition
         LLVMPositionBuilderAtEnd(builder, conditionBlock);
         LLVMValueRef condVal = this.visit(ctx.cond());
@@ -167,15 +175,20 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
         //entry
         LLVMPositionBuilderAtEnd(builder, entry);
+        entryStack.pop();
+        whileBodyStack.pop();
+        conditionBlockStack.pop();
         return null;
     }
     @Override
     public LLVMValueRef visitBreakStmt(SysYParser.BreakStmtContext ctx) {
+        LLVMBasicBlockRef entry = entryStack.peek();
         LLVMBuildBr(builder, entry);
         return null;
     }
     @Override
     public LLVMValueRef visitContinueStmt(SysYParser.ContinueStmtContext ctx) {
+        LLVMBasicBlockRef conditionBlock = conditionBlockStack.peek();
         LLVMBuildBr(builder, conditionBlock);
         return null;
     }
@@ -190,8 +203,10 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMValueRef l = visit(ctx.cond(0));
         LLVMBasicBlockRef nextBlock = LLVMAppendBasicBlock(function, "nextCondition");
         if(ctx.AND()!=null) {
+            LLVMBasicBlockRef entry = entryStack.peek();
             LLVMBuildCondBr(builder, l, nextBlock, entry);
         }else{
+            LLVMBasicBlockRef whileBody = whileBodyStack.peek();
             LLVMBuildCondBr(builder, l, whileBody, nextBlock);
         }
         LLVMPositionBuilderAtEnd(builder, nextBlock);

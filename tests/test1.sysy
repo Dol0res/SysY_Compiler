@@ -1,4 +1,10 @@
-
+int a;
 void f(int a){
     return ;
+}
+
+void main(){
+    int a = 1;
+    f(a);
+    return f(a);
 }
