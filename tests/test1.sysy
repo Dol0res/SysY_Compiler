@@ -2,11 +2,11 @@ int e(){
     return 0;
 }
 
-void main() {
+int main() {
     int a = 12, b = 8;
     if(a>0){
-        return ;
+        return 0;
     }
     e();
-    return ;
+    return 0;
 }

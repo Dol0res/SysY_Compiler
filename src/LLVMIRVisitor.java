@@ -219,8 +219,9 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     @Override
     public LLVMValueRef visitOrCond(SysYParser.OrCondContext ctx) {
         LLVMValueRef l = visit(ctx.cond(0));
+        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, l, "cmp_result");//todo
         LLVMBasicBlockRef nextBlock = LLVMAppendBasicBlock(function, "nextCondition");
-        LLVMBuildCondBr(builder, l, lastTrueBlock, nextBlock);
+        LLVMBuildCondBr(builder, cmpResult, lastTrueBlock, nextBlock);
 
         LLVMPositionBuilderAtEnd(builder, nextBlock);
         LLVMValueRef r = visit(ctx.cond(1));
