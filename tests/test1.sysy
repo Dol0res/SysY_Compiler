@@ -6,5 +6,5 @@ void f(int a){
 void main(){
     int a = 1;
     f(a);
-    return f(a);
+    //return;
 }
