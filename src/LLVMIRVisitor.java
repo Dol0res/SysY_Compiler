@@ -69,7 +69,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
             curScope.define(varName, arg1);
         }
         LLVMValueRef r = super.visitFuncDef(ctx);
-        LLVMBuildRetVoid(builder);
+        if(returnType == voidType)LLVMBuildRetVoid(builder);
 
         curScope=lastScope;
         curScope.define(functionName,function);
