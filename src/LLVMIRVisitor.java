@@ -290,7 +290,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
                 args.put(i, this.visit(expContext));
             }
         }
-        return LLVMBuildCall(builder, function, args, argsCount, functionName);
+        return LLVMBuildCall(builder, function, args, argsCount, "");
     }
     @Override
     public LLVMValueRef visitParenExp(SysYParser.ParenExpContext ctx) {
