@@ -27,8 +27,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     LLVMValueRef function=null;
     //LLVMBasicBlockRef entry=null;
-//    LLVMBasicBlockRef conditionBlock = null;
-    //LLVMBasicBlockRef whileBody=null;
+    LLVMBasicBlockRef lastFalseBlock = null;
+    LLVMBasicBlockRef lastTrueBlock=null;
     private final Stack<LLVMBasicBlockRef> entryStack = new Stack<>();
     private final Stack<LLVMBasicBlockRef> whileBodyStack = new Stack<>();
     private final Stack<LLVMBasicBlockRef> conditionBlockStack = new Stack<>();
@@ -130,12 +130,15 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     }
     @Override
     public LLVMValueRef visitIfStmt(SysYParser.IfStmtContext ctx) {
-        LLVMValueRef condVal = this.visit(ctx.cond());
         //LLVMValueRef condVal2 =  LLVMBuildZExt(builder, condVal, i32Type, "tmp");
-        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal, "cmp_result");
         LLVMBasicBlockRef trueBlock = LLVMAppendBasicBlock(function, "true");
         LLVMBasicBlockRef falseBlock = LLVMAppendBasicBlock(function, "false");
         LLVMBasicBlockRef afterBlock = LLVMAppendBasicBlock(function, "entry");
+        //entryStack.push(entry);
+        lastFalseBlock = falseBlock;
+        lastTrueBlock = trueBlock;
+        LLVMValueRef condVal = this.visit(ctx.cond());
+        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, condVal, "cmp_result");
 
         LLVMBuildCondBr(builder, cmpResult, trueBlock, falseBlock);
 
@@ -161,6 +164,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         entryStack.push(entry);
         whileBodyStack.push(whileBody);
         conditionBlockStack.push(conditionBlock);
+        lastFalseBlock = entry;
+        lastTrueBlock = whileBody;
         //condition
         LLVMPositionBuilderAtEnd(builder, conditionBlock);
         LLVMValueRef condVal = this.visit(ctx.cond());
@@ -202,20 +207,28 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
     @Override
     public LLVMValueRef visitAndCond(SysYParser.AndCondContext ctx) {
         LLVMValueRef l = visit(ctx.cond(0));
+        LLVMValueRef cmpResult = LLVMBuildICmp(builder, LLVMIntNE, zero, l, "cmp_result");//todo
         LLVMBasicBlockRef nextBlock = LLVMAppendBasicBlock(function, "nextCondition");
-        if(ctx.AND()!=null) {
-            LLVMBasicBlockRef entry = entryStack.peek();
-            LLVMBuildCondBr(builder, l, nextBlock, entry);
-        }else{
-            LLVMBasicBlockRef whileBody = whileBodyStack.peek();
-            LLVMBuildCondBr(builder, l, whileBody, nextBlock);
-        }
+        LLVMBuildCondBr(builder, cmpResult, nextBlock, lastFalseBlock);
+
         LLVMPositionBuilderAtEnd(builder, nextBlock);
         LLVMValueRef r = visit(ctx.cond(1));
 
-        //todo
         return r;
     }
+    @Override
+    public LLVMValueRef visitOrCond(SysYParser.OrCondContext ctx) {
+        LLVMValueRef l = visit(ctx.cond(0));
+        LLVMBasicBlockRef nextBlock = LLVMAppendBasicBlock(function, "nextCondition");
+        LLVMBuildCondBr(builder, l, lastTrueBlock, nextBlock);
+
+        LLVMPositionBuilderAtEnd(builder, nextBlock);
+        LLVMValueRef r = visit(ctx.cond(1));
+
+        return r;
+    }
+
+
     @Override
     public LLVMValueRef visitEqCond(SysYParser.EqCondContext ctx) {
         LLVMValueRef lVal = this.visit(ctx.cond(0));
