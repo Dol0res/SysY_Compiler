@@ -76,6 +76,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
 
         curScope=lastScope;
         curScope.define(functionName,function);
+
         return r;
 
     }
@@ -308,11 +309,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
                 args.put(i, this.visit(expContext));
             }
         }
-        LLVMTypeRef ft = LLVMTypeOf(function);
-        LLVMTypeRef retType =  LLVMGetReturnType(ft);
-        if(retType != i32Type){
-            functionName = "";
-        }
+        LLVMTypeRef retTy = LLVMTypeOf(function);
+        if (LLVMGetTypeKind(LLVMGetReturnType(LLVMGetElementType(retTy))) != LLVMIntegerTypeKind)functionName = "";
         return LLVMBuildCall(builder, function, args, argsCount, functionName);
     }
     @Override

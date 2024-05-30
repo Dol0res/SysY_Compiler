@@ -1,5 +1,5 @@
-void e(){
-    return ;
+int e(){
+    return 0;
 }
 
 int main() {

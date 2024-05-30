@@ -1,9 +1,9 @@
 ; ModuleID = 'module'
 source_filename = "module"
 
-define void @e() {
+define i32 @e() {
 eEntry:
-  ret void
+  ret i32 0
 }
 
 define i32 @main() {
@@ -19,7 +19,7 @@ mainEntry:
   br i1 %cmp_result, label %true, label %false
 
 true:                                             ; preds = %mainEntry
-  call void @e()
+  %e = call i32 @e()
   ret i32 0
   br label %entry
 
@@ -28,6 +28,6 @@ false:                                            ; preds = %mainEntry
 
 entry:                                            ; preds = %false, %true
   store i32 1, i32* %a, align 4
-  call void @e()
+  %e2 = call i32 @e()
   ret i32 0
 }
