@@ -25,6 +25,7 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         LLVMInitializeNativeTarget();
 
     }
+    boolean hasReturn = false;
     LLVMValueRef function=null;
     //LLVMBasicBlockRef entry=null;
     LLVMBasicBlockRef lastFalseBlock = null;
@@ -69,7 +70,9 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
             curScope.define(varName, arg1);
         }
         LLVMValueRef r = super.visitFuncDef(ctx);
-        if(returnType == voidType)LLVMBuildRetVoid(builder);
+
+        if(hasReturn == false)LLVMBuildRetVoid(builder);
+        hasReturn = false;
 
         curScope=lastScope;
         curScope.define(functionName,function);
@@ -121,7 +124,8 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
         }else {
             LLVMBuildRetVoid(builder);
         }
-            return result;
+        hasReturn = true;
+        return result;
 
     }
     @Override
@@ -304,7 +308,12 @@ public class LLVMIRVisitor extends SysYParserBaseVisitor<LLVMValueRef> {
                 args.put(i, this.visit(expContext));
             }
         }
-        return LLVMBuildCall(builder, function, args, argsCount, "");
+        LLVMTypeRef ft = LLVMTypeOf(function);
+        LLVMTypeRef retType =  LLVMGetReturnType(ft);
+        if(retType != i32Type){
+            functionName = "";
+        }
+        return LLVMBuildCall(builder, function, args, argsCount, functionName);
     }
     @Override
     public LLVMValueRef visitParenExp(SysYParser.ParenExpContext ctx) {

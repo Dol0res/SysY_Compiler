@@ -1,12 +1,14 @@
-int e(){
-    return 0;
+void e(){
+    return ;
 }
 
 int main() {
     int a = 12, b = 8;
     if(a>0){
+    e();
         return 0;
     }
+    a=1;
     e();
     return 0;
 }
