@@ -1,33 +1,9 @@
-; ModuleID = 'module'
-source_filename = "module"
-
-define i32 @e() {
-eEntry:
-  ret i32 0
-}
-
-define i32 @main() {
+  .text
+  .globl main
+main:
+  addi sp, sp, 0
 mainEntry:
-  %a = alloca i32, align 4
-  store i32 12, i32* %a, align 4
-  %b = alloca i32, align 4
-  store i32 8, i32* %b, align 4
-  %a1 = load i32, i32* %a, align 4
-  %GT = icmp sgt i32 %a1, 0
-  %ext = zext i1 %GT to i32
-  %cmp_result = icmp ne i32 0, %ext
-  br i1 %cmp_result, label %true, label %false
-
-true:                                             ; preds = %mainEntry
-  %e = call i32 @e()
-  ret i32 0
-  br label %entry
-
-false:                                            ; preds = %mainEntry
-  br label %entry
-
-entry:                                            ; preds = %false, %true
-  store i32 1, i32* %a, align 4
-  %e2 = call i32 @e()
-  ret i32 0
-}
+  li a0, 1
+  addi sp, sp, 0
+  li a7, 93
+  ecall
