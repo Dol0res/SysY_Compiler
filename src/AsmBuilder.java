@@ -20,12 +20,21 @@ public class AsmBuilder {
     public void globl(String name) {
         buffer.append(String.format("  .globl %s\n", name));
     }
+//    public void alloc(String name) {
+//
+//        buffer.append(String.format("  .globl %s\n", name));
+//    }
     public void text(String functionName) {
         buffer.append("  .text\n");
 //        buffer.append(".align 2\n");
 //        buffer.append(functionName).append(":\n");
     }
-
+    public void data(String name, String num) {
+        buffer.append("  .data\n");
+        buffer.append(String.format("%s:\n", name));
+        buffer.append(String.format("  .word %s\n", num));
+        buffer.append("\n");
+    }
     //...
     public String getAsmCode() {
         return buffer.toString();
