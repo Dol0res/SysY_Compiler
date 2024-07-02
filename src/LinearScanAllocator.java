@@ -138,7 +138,7 @@ public class LinearScanAllocator implements RegisterAllocator {
             i++;
         }
         allocateRegisters();
-        stackSize= Math.min(800,(int) ((stackSize*1.2/16+1)*16));
+        stackSize= Math.min(800,((int) (stackSize*1.2/16+1))*16);
     }
 
     @Override
@@ -197,7 +197,8 @@ public class LinearScanAllocator implements RegisterAllocator {
 
         }else{
             if(getStack(name)==-1) allocate(name);
-            AsmBuilder.op1("lw", "t" + String.valueOf(i), getStack(name) + "(sp)");
+            boolean f = AsmBuilder.op1("lw", "t" + String.valueOf(i), getStack(name) + "(sp)");
+            if(!f)stackSize+=4;
         }
     }
 
