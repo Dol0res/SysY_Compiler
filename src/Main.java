@@ -123,8 +123,8 @@ public class Main {
                         continue;
                     }
                     if (opcode == LLVMAlloca) {
-                        name = LLVMGetValueName(inst).getString();
-                        allocator2.allocate(name);
+                        //name = LLVMGetValueName(inst).getString();
+                        //allocator2.allocate(name);
                         continue;
                     }
 
