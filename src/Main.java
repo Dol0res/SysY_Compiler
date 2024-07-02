@@ -154,8 +154,8 @@ public class Main {
                 }
 
             }
-//            String asmCode = AsmBuilder.getAsmCode();
-//            System.out.println(asmCode);
+            //String asmCode = AsmBuilder.getAsmCode();
+            //System.out.println(asmCode);
             AsmBuilder.writeTo(destPath);
 
         }
