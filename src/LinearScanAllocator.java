@@ -214,7 +214,10 @@ public class LinearScanAllocator implements RegisterAllocator {
             int i = registerMap.get(name2);
             reg2 = registers.get(i);
         }
-        AsmBuilder.op2(op, "t0", reg1, reg2);
+        if(opcode==LLVMSRem){
+            AsmBuilder.op2("div", "t0", reg1, reg2);
+            AsmBuilder.op0("mfhi", reg1);
+        }else AsmBuilder.op2(op, "t0", reg1, reg2);
 
         String name = LLVMGetValueName(inst).getString();
         storeNew(name);

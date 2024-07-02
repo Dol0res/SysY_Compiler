@@ -12,6 +12,9 @@ public  class AsmBuilder {
     public static void op1(String op, String dest, String lhs) {
         buffer.append(String.format("  %s %s, %s\n", op, dest, lhs));
     }
+    public static void op0(String op, String dest) {
+        buffer.append(String.format("  %s %s\n", op, dest));
+    }
     public static void basic(String basicName) {
         buffer.append(String.format("%s:\n", basicName));
     }

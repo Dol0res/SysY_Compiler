@@ -176,36 +176,4 @@ public class Main {
         }
     }
 
-
-
-    public static String determineDestination(LLVMValueRef inst) {
-        int opcode = LLVMGetInstructionOpcode(inst);
-
-        switch (opcode) {
-            case LLVMAdd:
-            case LLVMSub:
-            case LLVMMul:
-            case LLVMSDiv:
-                // 对于二元运算指令，第一个操作数通常是目标操作数
-                LLVMValueRef destOperand = LLVMGetOperand(inst, 0);
-                return LLVMGetValueName(destOperand).getString();
-
-            case LLVMStore:
-                LLVMValueRef storedValue = LLVMGetOperand(inst, 0);
-
-                // 如果存储的值是一个指针类型，则进一步获取它指向的名称
-//                if (LLVMTypeOf(storedValue).getTypeKind() == LLVMPointerTypeKind) {
-                LLVMValueRef pointedToValue = LLVMGetOperand(storedValue, 0);
-                return LLVMGetValueName(pointedToValue).getString();
-            //}
-
-            // 如果存储的值不是指针类型，则直接返回其名称
-            //return LLVMGetValueName(storedValue).getString();
-
-            // 处理其他指令类型...
-
-            default:
-                return "unknown"; // 如果未识别的操作码，返回 "unknown"
-        }
-    }
 }
