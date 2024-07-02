@@ -14,212 +14,119 @@ z:
 a:
   .word 4
 
-  .data
-b:
-  .word 5
-
-  .data
-c:
-  .word 6
-
-  .data
-d:
-  .word 7
-
-  .data
-e:
-  .word 8
-
-  .data
-f:
-  .word 9
-
-  .data
-g:
-  .word 10
-
-  .data
-h:
-  .word 11
-
-  .data
-i:
-  .word 12
-
-  .data
-j:
-  .word 13
-
-  .data
-k:
-  .word 14
-
-  .data
-l:
-  .word 15
-
-  .data
-m:
-  .word 16
-
-  .data
-n:
-  .word 17
-
-  .data
-o:
-  .word 18
-
-  .data
-p:
-  .word 19
-
-  .data
-q:
-  .word 20
-
   .text
   .globl main
 main:
-  addi sp, sp, 160
+  addi sp, sp, 80
 mainEntry:
+  li t0, 1
+  mv s0, t0
+  li t0, 2
+  mv s1, t0
+  li t0, 3
+  mv s2, t0
+  li t0, 4
+  mv s3, t0
   la t2, x
   lw t0, 0(t2)
-  sw t0, 156(sp)
+  sw t0, 76(sp)
+  lw t0, 76(sp)
+  li t1, 1
+  add t0, t0, t1
+  sw t0, 72(sp)
+  lw t0, 72(sp)
+  la t2, x
+  sw t0, 0(t2)
   la t2, y
   lw t0, 0(t2)
-  sw t0, 152(sp)
-  lw t0, 156(sp)
-  lw t1, 152(sp)
+  sw t0, 68(sp)
+  lw t0, 68(sp)
+  li t1, 2
   add t0, t0, t1
-  sw t0, 148(sp)
+  sw t0, 64(sp)
+  lw t0, 64(sp)
+  la t2, y
+  sw t0, 0(t2)
   la t2, z
   lw t0, 0(t2)
-  sw t0, 144(sp)
-  lw t0, 148(sp)
-  lw t1, 144(sp)
+  sw t0, 60(sp)
+  lw t0, 60(sp)
+  li t1, 3
   add t0, t0, t1
-  sw t0, 140(sp)
+  sw t0, 56(sp)
+  lw t0, 56(sp)
+  la t2, z
+  sw t0, 0(t2)
   la t2, a
   lw t0, 0(t2)
-  sw t0, 136(sp)
-  lw t0, 140(sp)
-  lw t1, 136(sp)
-  add t0, t0, t1
-  sw t0, 132(sp)
-  la t2, b
-  lw t0, 0(t2)
-  sw t0, 128(sp)
-  lw t0, 132(sp)
-  lw t1, 128(sp)
-  add t0, t0, t1
-  sw t0, 124(sp)
-  la t2, c
-  lw t0, 0(t2)
-  sw t0, 120(sp)
-  lw t0, 124(sp)
-  lw t1, 120(sp)
-  add t0, t0, t1
-  sw t0, 116(sp)
-  la t2, d
-  lw t0, 0(t2)
-  sw t0, 112(sp)
-  lw t0, 116(sp)
-  lw t1, 112(sp)
-  add t0, t0, t1
-  sw t0, 108(sp)
-  la t2, e
-  lw t0, 0(t2)
-  sw t0, 104(sp)
-  lw t0, 108(sp)
-  lw t1, 104(sp)
-  add t0, t0, t1
-  sw t0, 100(sp)
-  la t2, f
-  lw t0, 0(t2)
-  sw t0, 96(sp)
-  lw t0, 100(sp)
-  lw t1, 96(sp)
-  add t0, t0, t1
-  sw t0, 92(sp)
-  la t2, g
-  lw t0, 0(t2)
-  sw t0, 88(sp)
-  lw t0, 92(sp)
-  lw t1, 88(sp)
-  add t0, t0, t1
-  sw t0, 84(sp)
-  la t2, h
-  lw t0, 0(t2)
-  sw t0, 80(sp)
-  lw t0, 84(sp)
-  lw t1, 80(sp)
-  add t0, t0, t1
-  sw t0, 76(sp)
-  la t2, i
-  lw t0, 0(t2)
-  sw t0, 72(sp)
-  lw t0, 76(sp)
-  lw t1, 72(sp)
-  add t0, t0, t1
-  sw t0, 68(sp)
-  la t2, j
-  lw t0, 0(t2)
-  sw t0, 64(sp)
-  lw t0, 68(sp)
-  lw t1, 64(sp)
-  add t0, t0, t1
-  sw t0, 60(sp)
-  la t2, k
-  lw t0, 0(t2)
-  sw t0, 56(sp)
-  lw t0, 60(sp)
-  lw t1, 56(sp)
-  add t0, t0, t1
   sw t0, 52(sp)
-  la t2, l
-  lw t0, 0(t2)
-  sw t0, 48(sp)
   lw t0, 52(sp)
-  lw t1, 48(sp)
+  li t1, 4
   add t0, t0, t1
+  sw t0, 48(sp)
+  lw t0, 48(sp)
+  la t2, a
+  sw t0, 0(t2)
   sw t0, 44(sp)
-  la t2, m
-  lw t0, 0(t2)
-  sw t0, 40(sp)
   lw t0, 44(sp)
-  lw t1, 40(sp)
-  add t0, t0, t1
+  li t1, 2
+  mul t0, t0, t1
+  sw t0, 40(sp)
+  lw t0, 40(sp)
+  mv s0, t0
   sw t0, 36(sp)
-  la t2, n
-  lw t0, 0(t2)
-  sw t0, 32(sp)
   lw t0, 36(sp)
-  lw t1, 32(sp)
-  add t0, t0, t1
+  li t1, 2
+  mul t0, t0, t1
+  sw t0, 32(sp)
+  lw t0, 32(sp)
+  mv s1, t0
   sw t0, 28(sp)
-  la t2, o
-  lw t0, 0(t2)
-  sw t0, 24(sp)
   lw t0, 28(sp)
-  lw t1, 24(sp)
-  add t0, t0, t1
+  li t1, 2
+  mul t0, t0, t1
+  sw t0, 24(sp)
+  lw t0, 24(sp)
+  mv s2, t0
   sw t0, 20(sp)
-  la t2, p
-  lw t0, 0(t2)
-  sw t0, 16(sp)
   lw t0, 20(sp)
-  lw t1, 16(sp)
-  add t0, t0, t1
+  li t1, 2
+  mul t0, t0, t1
+  sw t0, 16(sp)
+  lw t0, 16(sp)
+  mv s3, t0
   sw t0, 12(sp)
-  la t2, q
-  lw t0, 0(t2)
-  sw t0, 8(sp)
+  mv s0, s1
   lw t0, 12(sp)
-  lw t1, 8(sp)
-  add t0, t0, t1
-  sw t0, 4(sp)
-  lw a0, 4(sp)
+  add t0, t0, s0
+  mv s1, t0
+  mv s0, s2
+  add t0, s1, s0
+  mv s2, t0
+  mv s0, s3
+  add t0, s2, s0
+  mv s1, t0
+  la t2, x
+  lw t0, 0(t2)
+  mv s0, t0
+  add t0, s1, s0
+  mv s2, t0
+  la t2, y
+  lw t0, 0(t2)
+  mv s0, t0
+  add t0, s2, s0
+  mv s1, t0
+  la t2, z
+  lw t0, 0(t2)
+  mv s0, t0
+  add t0, s1, s0
+  mv s2, t0
+  la t2, a
+  lw t0, 0(t2)
+  mv s0, t0
+  add t0, s2, s0
+  mv s1, t0
+  mv a0, s1
   addi sp, sp, 0
   li a7, 93
   ecall
