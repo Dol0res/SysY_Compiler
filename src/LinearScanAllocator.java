@@ -214,10 +214,11 @@ public class LinearScanAllocator implements RegisterAllocator {
             int i = registerMap.get(name2);
             reg2 = registers.get(i);
         }
-        if(opcode==LLVMSRem){
-            AsmBuilder.op2("div", "t0", reg1, reg2);
-            AsmBuilder.op1("mv","t0", reg1);
-        }else AsmBuilder.op2(op, "t0", reg1, reg2);
+//        if(opcode==LLVMSRem){
+//            AsmBuilder.op2("div", "t0", reg1, reg2);
+//            AsmBuilder.op1("mv","t0", reg1);
+//        }else
+            AsmBuilder.op2(op, "t0", reg1, reg2);
 
         String name = LLVMGetValueName(inst).getString();
         storeNew(name);
@@ -248,7 +249,7 @@ public class LinearScanAllocator implements RegisterAllocator {
             case LLVMSDiv:
                 return "div";
             case LLVMSRem:
-                return "store";
+                return "rem";
             case LLVMLoad:
                 return "load";
             // 添加更多操作码的处理
