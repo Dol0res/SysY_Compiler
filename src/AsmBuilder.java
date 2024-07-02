@@ -37,7 +37,7 @@ public  class AsmBuilder {
     public static String getAsmCode() {
         return buffer.toString();
     }
-    public void writeTo(String destPath) {
+    public static void writeTo(String destPath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(destPath))) {
             writer.write(buffer.toString());
         } catch (IOException e) {
