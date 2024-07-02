@@ -81,7 +81,7 @@ q:
   .text
   .globl main
 main:
-  addi sp, sp, 672
+  addi sp, sp, 404
 mainEntry:
   li t0, 1
   mv s0, t0
@@ -125,347 +125,347 @@ mainEntry:
   mv a7, t0
   la t2, x
   lw t0, 0(t2)
-  sw t0, 588(sp)
-  lw t0, 588(sp)
+  sw t0, 320(sp)
+  lw t0, 320(sp)
   li t1, 1
   add t0, t0, t1
-  sw t0, 584(sp)
-  lw t0, 584(sp)
+  sw t0, 316(sp)
+  lw t0, 316(sp)
   la t2, x
   sw t0, 0(t2)
   la t2, y
   lw t0, 0(t2)
-  sw t0, 580(sp)
-  lw t0, 580(sp)
+  sw t0, 312(sp)
+  lw t0, 312(sp)
   li t1, 2
   add t0, t0, t1
-  sw t0, 576(sp)
-  lw t0, 576(sp)
+  sw t0, 308(sp)
+  lw t0, 308(sp)
   la t2, y
   sw t0, 0(t2)
   la t2, z
   lw t0, 0(t2)
-  sw t0, 572(sp)
-  lw t0, 572(sp)
+  sw t0, 304(sp)
+  lw t0, 304(sp)
   li t1, 3
   add t0, t0, t1
-  sw t0, 568(sp)
-  lw t0, 568(sp)
+  sw t0, 300(sp)
+  lw t0, 300(sp)
   la t2, z
   sw t0, 0(t2)
   la t2, a
   lw t0, 0(t2)
-  sw t0, 564(sp)
-  lw t0, 564(sp)
+  sw t0, 296(sp)
+  lw t0, 296(sp)
   li t1, 4
   add t0, t0, t1
-  sw t0, 560(sp)
-  lw t0, 560(sp)
+  sw t0, 292(sp)
+  lw t0, 292(sp)
   la t2, a
   sw t0, 0(t2)
   la t2, b
   lw t0, 0(t2)
-  sw t0, 556(sp)
-  lw t0, 556(sp)
+  sw t0, 288(sp)
+  lw t0, 288(sp)
   li t1, 5
   add t0, t0, t1
-  sw t0, 552(sp)
-  lw t0, 552(sp)
+  sw t0, 284(sp)
+  lw t0, 284(sp)
   la t2, b
   sw t0, 0(t2)
   la t2, c
   lw t0, 0(t2)
-  sw t0, 548(sp)
-  lw t0, 548(sp)
+  sw t0, 280(sp)
+  lw t0, 280(sp)
   li t1, 6
   add t0, t0, t1
-  sw t0, 544(sp)
-  lw t0, 544(sp)
+  sw t0, 276(sp)
+  lw t0, 276(sp)
   la t2, c
   sw t0, 0(t2)
   la t2, d
   lw t0, 0(t2)
-  sw t0, 540(sp)
-  lw t0, 540(sp)
+  sw t0, 272(sp)
+  lw t0, 272(sp)
   li t1, 7
   add t0, t0, t1
-  sw t0, 536(sp)
-  lw t0, 536(sp)
+  sw t0, 268(sp)
+  lw t0, 268(sp)
   la t2, d
   sw t0, 0(t2)
   la t2, e
   lw t0, 0(t2)
-  sw t0, 532(sp)
-  lw t0, 532(sp)
+  sw t0, 264(sp)
+  lw t0, 264(sp)
   li t1, 8
   add t0, t0, t1
-  sw t0, 528(sp)
-  lw t0, 528(sp)
+  sw t0, 260(sp)
+  lw t0, 260(sp)
   la t2, e
   sw t0, 0(t2)
   la t2, f
   lw t0, 0(t2)
-  sw t0, 524(sp)
-  lw t0, 524(sp)
+  sw t0, 256(sp)
+  lw t0, 256(sp)
   li t1, 9
   add t0, t0, t1
-  sw t0, 520(sp)
-  lw t0, 520(sp)
+  sw t0, 252(sp)
+  lw t0, 252(sp)
   la t2, f
   sw t0, 0(t2)
   la t2, g
   lw t0, 0(t2)
-  sw t0, 516(sp)
-  lw t0, 516(sp)
+  sw t0, 248(sp)
+  lw t0, 248(sp)
   li t1, 10
   add t0, t0, t1
-  sw t0, 512(sp)
-  lw t0, 512(sp)
+  sw t0, 244(sp)
+  lw t0, 244(sp)
   la t2, g
   sw t0, 0(t2)
   la t2, h
   lw t0, 0(t2)
-  sw t0, 508(sp)
-  lw t0, 508(sp)
+  sw t0, 240(sp)
+  lw t0, 240(sp)
   li t1, 11
   add t0, t0, t1
-  sw t0, 504(sp)
-  lw t0, 504(sp)
+  sw t0, 236(sp)
+  lw t0, 236(sp)
   la t2, h
   sw t0, 0(t2)
   la t2, i
   lw t0, 0(t2)
-  sw t0, 500(sp)
-  lw t0, 500(sp)
+  sw t0, 232(sp)
+  lw t0, 232(sp)
   li t1, 12
   add t0, t0, t1
-  sw t0, 496(sp)
-  lw t0, 496(sp)
+  sw t0, 228(sp)
+  lw t0, 228(sp)
   la t2, i
   sw t0, 0(t2)
   la t2, j
   lw t0, 0(t2)
-  sw t0, 492(sp)
-  lw t0, 492(sp)
+  sw t0, 224(sp)
+  lw t0, 224(sp)
   li t1, 13
   add t0, t0, t1
-  sw t0, 488(sp)
-  lw t0, 488(sp)
+  sw t0, 220(sp)
+  lw t0, 220(sp)
   la t2, j
   sw t0, 0(t2)
   la t2, k
   lw t0, 0(t2)
-  sw t0, 484(sp)
-  lw t0, 484(sp)
+  sw t0, 216(sp)
+  lw t0, 216(sp)
   li t1, 14
   add t0, t0, t1
-  sw t0, 480(sp)
-  lw t0, 480(sp)
+  sw t0, 212(sp)
+  lw t0, 212(sp)
   la t2, k
   sw t0, 0(t2)
   la t2, l
   lw t0, 0(t2)
-  sw t0, 476(sp)
-  lw t0, 476(sp)
+  sw t0, 208(sp)
+  lw t0, 208(sp)
   li t1, 15
   add t0, t0, t1
-  sw t0, 472(sp)
-  lw t0, 472(sp)
+  sw t0, 204(sp)
+  lw t0, 204(sp)
   la t2, l
   sw t0, 0(t2)
   la t2, m
   lw t0, 0(t2)
-  sw t0, 468(sp)
-  lw t0, 468(sp)
+  sw t0, 200(sp)
+  lw t0, 200(sp)
   li t1, 16
   add t0, t0, t1
-  sw t0, 464(sp)
-  lw t0, 464(sp)
+  sw t0, 196(sp)
+  lw t0, 196(sp)
   la t2, m
   sw t0, 0(t2)
   la t2, n
   lw t0, 0(t2)
-  sw t0, 460(sp)
-  lw t0, 460(sp)
+  sw t0, 192(sp)
+  lw t0, 192(sp)
   li t1, 17
   add t0, t0, t1
-  sw t0, 456(sp)
-  lw t0, 456(sp)
+  sw t0, 188(sp)
+  lw t0, 188(sp)
   la t2, n
   sw t0, 0(t2)
   la t2, o
   lw t0, 0(t2)
-  sw t0, 452(sp)
-  lw t0, 452(sp)
+  sw t0, 184(sp)
+  lw t0, 184(sp)
   li t1, 18
   add t0, t0, t1
-  sw t0, 448(sp)
-  lw t0, 448(sp)
+  sw t0, 180(sp)
+  lw t0, 180(sp)
   la t2, o
   sw t0, 0(t2)
   la t2, p
   lw t0, 0(t2)
-  sw t0, 444(sp)
-  lw t0, 444(sp)
+  sw t0, 176(sp)
+  lw t0, 176(sp)
   li t1, 19
   add t0, t0, t1
-  sw t0, 440(sp)
-  lw t0, 440(sp)
+  sw t0, 172(sp)
+  lw t0, 172(sp)
   la t2, p
   sw t0, 0(t2)
   la t2, q
   lw t0, 0(t2)
-  sw t0, 436(sp)
-  lw t0, 436(sp)
+  sw t0, 168(sp)
+  lw t0, 168(sp)
   li t1, 20
   add t0, t0, t1
-  sw t0, 432(sp)
-  lw t0, 432(sp)
+  sw t0, 164(sp)
+  lw t0, 164(sp)
   la t2, q
   sw t0, 0(t2)
-  sw t0, 428(sp)
-  lw t0, 428(sp)
+  sw t0, 160(sp)
+  lw t0, 160(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 424(sp)
-  lw t0, 424(sp)
+  sw t0, 156(sp)
+  lw t0, 156(sp)
   mv s0, t0
-  sw t0, 420(sp)
-  lw t0, 420(sp)
+  sw t0, 152(sp)
+  lw t0, 152(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 416(sp)
-  lw t0, 416(sp)
+  sw t0, 148(sp)
+  lw t0, 148(sp)
   mv s1, t0
-  sw t0, 412(sp)
-  lw t0, 412(sp)
+  sw t0, 144(sp)
+  lw t0, 144(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 408(sp)
-  lw t0, 408(sp)
+  sw t0, 140(sp)
+  lw t0, 140(sp)
   mv s2, t0
-  sw t0, 404(sp)
-  lw t0, 404(sp)
+  sw t0, 136(sp)
+  lw t0, 136(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 400(sp)
-  lw t0, 400(sp)
+  sw t0, 132(sp)
+  lw t0, 132(sp)
   mv s3, t0
-  sw t0, 396(sp)
-  lw t0, 396(sp)
+  sw t0, 128(sp)
+  lw t0, 128(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 392(sp)
-  lw t0, 392(sp)
+  sw t0, 124(sp)
+  lw t0, 124(sp)
   mv s4, t0
-  sw t0, 388(sp)
-  lw t0, 388(sp)
+  sw t0, 120(sp)
+  lw t0, 120(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 384(sp)
-  lw t0, 384(sp)
+  sw t0, 116(sp)
+  lw t0, 116(sp)
   mv s5, t0
-  sw t0, 380(sp)
-  lw t0, 380(sp)
+  sw t0, 112(sp)
+  lw t0, 112(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 376(sp)
-  lw t0, 376(sp)
+  sw t0, 108(sp)
+  lw t0, 108(sp)
   mv s6, t0
-  sw t0, 372(sp)
-  lw t0, 372(sp)
+  sw t0, 104(sp)
+  lw t0, 104(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 368(sp)
-  lw t0, 368(sp)
+  sw t0, 100(sp)
+  lw t0, 100(sp)
   mv s7, t0
-  sw t0, 364(sp)
-  lw t0, 364(sp)
+  sw t0, 96(sp)
+  lw t0, 96(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 360(sp)
-  lw t0, 360(sp)
+  sw t0, 92(sp)
+  lw t0, 92(sp)
   mv s8, t0
-  sw t0, 356(sp)
-  lw t0, 356(sp)
+  sw t0, 88(sp)
+  lw t0, 88(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 352(sp)
-  lw t0, 352(sp)
+  sw t0, 84(sp)
+  lw t0, 84(sp)
   mv s9, t0
-  sw t0, 348(sp)
-  lw t0, 348(sp)
+  sw t0, 80(sp)
+  lw t0, 80(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 344(sp)
-  lw t0, 344(sp)
+  sw t0, 76(sp)
+  lw t0, 76(sp)
   mv s10, t0
-  sw t0, 340(sp)
-  lw t0, 340(sp)
+  sw t0, 72(sp)
+  lw t0, 72(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 336(sp)
-  lw t0, 336(sp)
+  sw t0, 68(sp)
+  lw t0, 68(sp)
   mv s11, t0
-  sw t0, 332(sp)
-  lw t0, 332(sp)
+  sw t0, 64(sp)
+  lw t0, 64(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 328(sp)
-  lw t0, 328(sp)
+  sw t0, 60(sp)
+  lw t0, 60(sp)
   mv a0, t0
-  sw t0, 324(sp)
-  lw t0, 324(sp)
+  sw t0, 56(sp)
+  lw t0, 56(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 320(sp)
-  lw t0, 320(sp)
+  sw t0, 52(sp)
+  lw t0, 52(sp)
   mv a1, t0
-  sw t0, 316(sp)
-  lw t0, 316(sp)
+  sw t0, 48(sp)
+  lw t0, 48(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 312(sp)
-  lw t0, 312(sp)
+  sw t0, 44(sp)
+  lw t0, 44(sp)
   mv a2, t0
-  sw t0, 308(sp)
-  lw t0, 308(sp)
+  sw t0, 40(sp)
+  lw t0, 40(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 304(sp)
-  lw t0, 304(sp)
+  sw t0, 36(sp)
+  lw t0, 36(sp)
   mv a3, t0
-  sw t0, 300(sp)
-  lw t0, 300(sp)
+  sw t0, 32(sp)
+  lw t0, 32(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 296(sp)
-  lw t0, 296(sp)
+  sw t0, 28(sp)
+  lw t0, 28(sp)
   mv a4, t0
-  sw t0, 292(sp)
-  lw t0, 292(sp)
+  sw t0, 24(sp)
+  lw t0, 24(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 288(sp)
-  lw t0, 288(sp)
+  sw t0, 20(sp)
+  lw t0, 20(sp)
   mv a5, t0
-  sw t0, 284(sp)
-  lw t0, 284(sp)
+  sw t0, 16(sp)
+  lw t0, 16(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 280(sp)
-  lw t0, 280(sp)
+  sw t0, 12(sp)
+  lw t0, 12(sp)
   mv a6, t0
-  sw t0, 276(sp)
-  lw t0, 276(sp)
+  sw t0, 8(sp)
+  lw t0, 8(sp)
   li t1, 2
   mul t0, t0, t1
-  sw t0, 272(sp)
-  lw t0, 272(sp)
+  sw t0, 4(sp)
+  lw t0, 4(sp)
   mv a7, t0
-  sw t0, 268(sp)
+  sw t0, 0(sp)
   mv s0, s1
-  lw t0, 268(sp)
+  lw t0, 0(sp)
   add t0, t0, s0
   mv s1, t0
   mv s0, s2

@@ -15,7 +15,7 @@ public class LinearScanAllocator implements RegisterAllocator {
     private HashMap<String, Integer> stackMap= new HashMap<>();
     HashMap<String, Interval> variableIntervals = new HashMap<>();
     //List<String> variables=new ArrayList<>();
-    private static final int regNum = 24;
+    private static final int regNum = 20;
     private static class Interval {
         int start;
         int end;
