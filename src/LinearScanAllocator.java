@@ -138,7 +138,7 @@ public class LinearScanAllocator implements RegisterAllocator {
             i++;
         }
         allocateRegisters();
-        stackSize= 800;
+        stackSize= Math.min(800,(int) ((stackSize*1.2/16+1)*16));
     }
 
     @Override
