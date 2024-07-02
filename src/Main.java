@@ -74,11 +74,12 @@ public class Main {
             String funcName = LLVMGetValueName(value).getString();
             AsmBuilder.globl(funcName);
             AsmBuilder.basic(funcName);
-            AsmBuilder.op2("addi", "sp", "sp", String.valueOf(allocator2.getStackSize()));
             for (LLVMBasicBlockRef bb = LLVMGetFirstBasicBlock(value); bb != null; bb = LLVMGetNextBasicBlock(bb)) {
                 String basicName = LLVMGetBasicBlockName(bb).getString();
-                AsmBuilder.basic(basicName);
                 allocator2.init(bb);
+                AsmBuilder.op2("addi", "sp", "sp", String.valueOf(allocator2.getStackSize()));
+                AsmBuilder.basic(basicName);
+
                 for (LLVMValueRef inst = LLVMGetFirstInstruction(bb); inst != null; inst = LLVMGetNextInstruction(inst)) {
 
                     int opcode = LLVMGetInstructionOpcode(inst);
