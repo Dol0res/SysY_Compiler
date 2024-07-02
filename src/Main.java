@@ -49,9 +49,9 @@ public class Main {
         if (LLVMPrintModuleToFile(llvmIRVisitor.getModule(), destPath, error) != 0) {
             LLVMDisposeMessage(error);
         }
-        AsmBuilder asmBuilder = new AsmBuilder();
-        RegisterAllocator allocator2 = new MemoryOnlyAllocator();
-        //RegisterAllocator allocator2 = new LinearScanAllocator();
+        //AsmBuilder AsmBuilder;
+        //RegisterAllocator allocator2 = new MemoryOnlyAllocator();
+        RegisterAllocator allocator2 = new LinearScanAllocator();
         int t = 0;
         for (LLVMValueRef value = LLVMGetFirstGlobal(module); value != null; value = LLVMGetNextGlobal(value)) {
             //...
@@ -59,26 +59,26 @@ public class Main {
             String name = LLVMGetValueName(value).getString();
             LLVMValueRef op1 = LLVMGetOperand(value, 0);
             String op1Str = getOperandString(op1);
-            asmBuilder.data(name, op1Str);
+            AsmBuilder.data(name, op1Str);
             // 检查全局值是否是函数类型
             if (LLVMGetValueKind(value) == LLVMFunctionValueKind) {
                 // 将全局值转换为函数类型
 
             }
         }
-        asmBuilder.text("");
+        AsmBuilder.text("");
 
 
         for (LLVMValueRef value = LLVMGetFirstFunction(module); value != null; value = LLVMGetNextFunction(value)) {
             // 获取函数名
             String funcName = LLVMGetValueName(value).getString();
-            asmBuilder.globl(funcName);
-            asmBuilder.basic(funcName);
-            asmBuilder.op2("addi", "sp", "sp", "0");
+            AsmBuilder.globl(funcName);
+            AsmBuilder.basic(funcName);
+            AsmBuilder.op2("addi", "sp", "sp", String.valueOf(allocator2.getStackSize()));
             for (LLVMBasicBlockRef bb = LLVMGetFirstBasicBlock(value); bb != null; bb = LLVMGetNextBasicBlock(bb)) {
                 String basicName = LLVMGetBasicBlockName(bb).getString();
-                asmBuilder.basic(basicName);
-
+                AsmBuilder.basic(basicName);
+                allocator2.init(bb);
                 for (LLVMValueRef inst = LLVMGetFirstInstruction(bb); inst != null; inst = LLVMGetNextInstruction(inst)) {
 
                     int opcode = LLVMGetInstructionOpcode(inst);
@@ -93,34 +93,31 @@ public class Main {
 
                             long v = LLVMConstIntGetSExtValue(op1);
                             op1Str = Long.toString(v);  // 返回常数的值
-                            if (opcode == LLVMRet) asmBuilder.op1("li", "a0", op1Str);
-                            else if (opcode != LLVMAlloca) asmBuilder.op1("li", "t" + String.valueOf(i), op1Str);
+                            if (opcode == LLVMRet) AsmBuilder.op1("li", "a0", op1Str);
+                            else if (opcode != LLVMAlloca) AsmBuilder.op1("li", "t" + String.valueOf(i), op1Str);
 
                         } else if (LLVMIsAGlobalValue(op1) != null) {
                             // 如果操作数是全局值
                             op1Str = LLVMGetValueName(op1).getString();
-                            asmBuilder.op1("la", "t" + String.valueOf(i), op1Str);
-                            if(i==0)asmBuilder.op1("lw", "t" + String.valueOf(i), "0(t"+String.valueOf(i)+")");
-                            //else asmBuilder.op1("sw", "t" + String.valueOf(i), "0(t"+String.valueOf(i)+")");
+                            AsmBuilder.op1("la", "t2", op1Str);
+                            if(i==0)AsmBuilder.op1("lw", "t" + String.valueOf(i), "0(t2)");
                         } else {
                             if(opcode==LLVMStore&& i==1)break;
 
                             // 如果操作数是指令的结果
                             if (opcode == LLVMRet) {
-                                //asmBuilder.op1("la","a0",op1Str);
-                                asmBuilder.op1("lw", "a0", allocator2.getStack(name) + "(sp)");
+                                allocator2.ret(name);
 
-                            } else asmBuilder.op1("lw", "t" + String.valueOf(i), allocator2.getStack(name) + "(sp)");
-
+                            } else allocator2.loadNew(name,i);
                         }
                     }
 
                     String name = LLVMGetValueName(LLVMGetOperand(inst, 0)).getString();
                     if (opcode == LLVMRet) {
-                        //asmBuilder.op1("li","a0",op1Str);
-                        asmBuilder.op2("addi", "sp", "sp", "0");
-                        asmBuilder.op1("li", "a7", "93");
-                        asmBuilder.ecall();
+                        //AsmBuilder.op1("li","a0",op1Str);
+                        AsmBuilder.op2("addi", "sp", "sp", "0");
+                        AsmBuilder.op1("li", "a7", "93");
+                        AsmBuilder.ecall();
 
                         continue;
                     }
@@ -133,45 +130,32 @@ public class Main {
                     if (opcode == LLVMStore) {
 
                         if(LLVMIsAGlobalValue(LLVMGetOperand(inst, 1)) != null){
-                            asmBuilder.op1("sw", "t0", "0(t1)");
+                            AsmBuilder.op1("sw", "t0", "0(t2)");
                         }
                         else{
                             name = LLVMGetValueName(LLVMGetOperand(inst, 1)).getString();
-                            if(allocator2.getStack(name)==-1) allocator2.allocate(name);
+                            //allocator2.storeNew(name);
+                            allocator2.storeNew(LLVMGetValueName(LLVMGetOperand(inst, 0)).getString(),name);
 
-                            asmBuilder.op1("sw", "t0" , allocator2.getStack(name) + "(sp)");
                         }
                         continue;
                     }
                     if (opcode == LLVMLoad) {
-                        //asmBuilder.op1("lw", "t0" , allocator2.getStackSize() + "(sp)");
                         name = LLVMGetValueName(inst).getString();
-                        if(allocator2.getStack(name)==-1) allocator2.allocate(name);
-//                        t++;
-                        asmBuilder.op1("sw", "t0" , allocator2.getStack(name) + "(sp)");
+                        if(LLVMIsAGlobalValue(LLVMGetOperand(inst, 0))==null) allocator2.storeNew(LLVMGetValueName(LLVMGetOperand(inst, 0)).getString(), name);
+                        else allocator2.storeNew(name);
                         continue;
                     }
-                    String op = determineOpcode(opcode);
-//                    String dest = determineDestination(inst);
 
                     if (operandNum == 2) {
-                        asmBuilder.op2(op, "t0", "t0", "t1");
-                        name = LLVMGetValueName(inst).getString();
-                        if(allocator2.getStack(name)==-1) allocator2.allocate(name);
-
-                        asmBuilder.op1("sw", "t0", allocator2.getStack(name) + "(sp)");
-                    }
-                    else if (operandNum == 1) {
-                        asmBuilder.op1(op, "t0", "t0");
-                    } else {
-
+                        allocator2.op2(inst);
                     }
                 }
 
             }
-//            String asmCode = asmBuilder.getAsmCode();
-//            System.out.println(asmCode);
-            asmBuilder.writeTo(destPath);
+            String asmCode = AsmBuilder.getAsmCode();
+            System.out.println(asmCode);
+//            AsmBuilder.writeTo(destPath);
 
         }
     }
@@ -192,25 +176,7 @@ public class Main {
         }
     }
 
-    public static String determineOpcode(int opcode) {
-        switch (opcode) {
-            case LLVMAdd:
-                return "add";
-            case LLVMSub:
-                return "sub";
-            case LLVMMul:
-                return "mul";
-            case LLVMSDiv:
-                return "div";
-            case LLVMStore:
-                return "store";
-            case LLVMLoad:
-                return "load";
-            // 添加更多操作码的处理
-            default:
-                return "unknown"; // 如果未识别的操作码，返回 "unknown"
-        }
-    }
+
 
     public static String determineDestination(LLVMValueRef inst) {
         int opcode = LLVMGetInstructionOpcode(inst);
