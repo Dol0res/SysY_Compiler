@@ -13,11 +13,11 @@ public  class AsmBuilder {
     }
     public static boolean op1(String op, String dest, String lhs) {
         String a = String.format("  sw %s, %s\n", dest, lhs);
-//        if(op.equals("lw") && a.equals(last)){
-//            last="";
-//            return false;
-//        }
         buffer.append(last);
+        if(op.equals("lw") && a.equals(last)){
+            last="";
+            return false;
+        }
         last = String.format("  %s %s, %s\n", op, dest, lhs);
         return true;
     }

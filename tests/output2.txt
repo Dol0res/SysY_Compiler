@@ -1,22 +1,22 @@
-  .data
-a:
-  .word 1
+; ModuleID = 'module'
+source_filename = "module"
 
-  .data
-b:
-  .word 0
+@a = global i32 1
+@b = global i32 0
 
-  .text
-  .globl main
-main:
-  addi sp, sp, 16
+define i32 @main() {
 mainEntry:
-  li t0, 3
-  mv s0, t0
-  li t0, 10
-  sw t0, 12(sp)
-  sw s0, 8(sp)
-  lw a0, 8(sp)
-  addi sp, sp, 0
-  li a7, 93
-  ecall
+  %c = alloca i32, align 4
+  store i32 3, i32* %c, align 4
+  %c1 = load i32, i32* %c, align 4
+  %a = load i32, i32* @a, align 4
+  %tmp_ = add i32 %c1, %a
+  %tmp_2 = add i32 %tmp_, 1
+  store i32 %tmp_2, i32* @b, align 4
+  %d = alloca i32, align 4
+  store i32 10, i32* %d, align 4
+  %c3 = load i32, i32* %c, align 4
+  %d4 = load i32, i32* %d, align 4
+  %tmp_5 = add i32 %c3, %d4
+  ret i32 %tmp_5
+}

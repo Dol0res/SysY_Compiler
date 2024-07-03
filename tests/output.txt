@@ -1,15 +1,40 @@
-; ModuleID = 'module'
-source_filename = "module"
+  .data
+a:
+  .word 1
 
-@a = global i32 1
-@b = global i32 0
+  .data
+b:
+  .word 0
 
-define i32 @main() {
+  .text
+  .globl main
+main:
+  addi sp, sp, 32
 mainEntry:
-  %c = alloca i32, align 4
-  store i32 3, i32* %c, align 4
-  %d = alloca i32, align 4
-  store i32 10, i32* %d, align 4
-  %c1 = load i32, i32* %c, align 4
-  ret i32 %c1
-}
+  li t0, 3
+  mv s0, t0
+  sw s0, 28(sp)
+  la t2, a
+  lw t0, 0(t2)
+  sw t0, 24(sp)
+  lw t0, 28(sp)
+  lw t1, 24(sp)
+  add t0, t0, t1
+  sw t0, 20(sp)
+  li t1, 1
+  add t0, t0, t1
+  sw t0, 16(sp)
+  la t2, b
+  sw t0, 0(t2)
+  li t0, 10
+  sw t0, 12(sp)
+  sw s0, 8(sp)
+  lw t0, 12(sp)
+  mv s0, t0
+  lw t0, 8(sp)
+  add t0, t0, s0
+  sw t0, 4(sp)
+  lw a0, 4(sp)
+  addi sp, sp, 0
+  li a7, 93
+  ecall
