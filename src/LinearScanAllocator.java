@@ -15,7 +15,7 @@ public class LinearScanAllocator implements RegisterAllocator {
     private HashMap<String, Integer> stackMap= new HashMap<>();
     HashMap<String, Interval> variableIntervals = new HashMap<>();
     //List<String> variables=new ArrayList<>();
-    private static final int regNum = 24;
+    private static final int regNum = 2;
     private static class Interval {
         int start;
         int end;
@@ -108,7 +108,7 @@ public class LinearScanAllocator implements RegisterAllocator {
         String spillV = activeIntervals.get((activeIntervals.size()-1));
         Interval spillI = variableIntervals.get(spillV);
         Interval cI = variableIntervals.get(current);
-        if (cI.end > spillI.end) {
+        if (cI.end < spillI.end) {
             int r = registerMap.get(spillV);
             registerMap.put(current,r);
             registerMap.put(spillV,-1);
