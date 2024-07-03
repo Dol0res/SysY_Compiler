@@ -32,38 +32,32 @@ public class LinearScanAllocator implements RegisterAllocator {
     @Override
     public void allocate(String variable) {
         // 实现线性扫描算法的寄存器分配策略
-        stackSize -= 4; // 假设每个变量占用 4 字节的栈空间
-        stackMap.put(variable,stackSize);
+//        if(registerMap.containsKey(variable))return;
+//        if(getStack(variable)==-1) {
+            stackSize -= 4; // 假设每个变量占用 4 字节的栈空间
+            stackMap.put(variable, stackSize);
+        //}
     }
+    boolean[] regIsAssigned =new boolean[regNum];
+    List<String> activeIntervals = new ArrayList<>();
+
     public void allocateRegisters() {
-        boolean[] regIsAssigned =new boolean[regNum];
         // 将活跃区间按照开始位置排序
         // Step 1: Sort intervals by start position
         List<HashMap.Entry<String, Interval>> sortedIntervals = new ArrayList<>(variableIntervals.entrySet());
-        sortedIntervals.sort(Comparator.comparingInt(e -> e.getValue().start));
+        sortedIntervals.sort(Comparator.comparingInt(e -> e.getValue().end));
 
         // Step 2: Track active intervals
-        List<String> activeIntervals = new ArrayList<>();
 
         for (HashMap.Entry<String, Interval> entry : sortedIntervals) {
             String variable = entry.getKey();
             Interval interval = entry.getValue();
 
             // Step 3: Expire old intervals
-            Iterator<String> iterator = activeIntervals.iterator();
-            while (iterator.hasNext()) {
-                String activeVariable = iterator.next();
-                if (variableIntervals.get(activeVariable).end < interval.start) {
-                    iterator.remove();
-                    //expireRegister(activeVariable);
-                    if(registerMap.containsKey(activeVariable)) {
-                        int r = registerMap.get(activeVariable);
-                        regIsAssigned[r] = false;
-                    }
-                }
-            }
+            expireOldIntervals(activeIntervals,interval.start);
 
             // Step 4: Assign register to current interval
+
             //assignRegister(variable);
             boolean flag=false;
             for(int i=0;i<regNum;i++) {
@@ -75,26 +69,52 @@ public class LinearScanAllocator implements RegisterAllocator {
                 }
             }
             if(!flag){
+                spillAtInterval(variable);
                 stackSize+=4;
+            }else {
+                activeIntervals.add(variable);
             }
 
             // Step 5: Add current interval to active intervals
-            activeIntervals.add(variable);
         }
 
         // Step 6: Cleanup: Expire all active intervals
-        for (String variable : activeIntervals) {
-            //expireRegister(variable);
-            if(registerMap.containsKey(variable)) {
-                int r = registerMap.get(variable);
-                regIsAssigned[r] = false;
-            }
-        }
+        //expireOldIntervals()
     }
 
     @Override
     public int getStackSize() {
         return stackSize; // 线性扫描算法可能不需要栈空间大小
+    }
+
+    private void expireOldIntervals(List<String> active, int currentStart) {
+        Iterator<String> iterator = active.iterator();
+        while (iterator.hasNext()) {
+
+            String variable = iterator.next();
+            Interval interval =  variableIntervals.get(variable);
+            if (interval.end < currentStart) {
+                iterator.remove();
+                int r = registerMap.get(variable);
+                regIsAssigned[r] = false;
+                //freeRegisters.add(interval.register);
+            } else {
+                break;
+            }
+        }
+    }
+    private String spillAtInterval(String current) {
+        String spillV = activeIntervals.get((activeIntervals.size()));
+        Interval spillI = variableIntervals.get(spillV);
+        Interval cI = variableIntervals.get(current);
+        if (cI.end > spillI.end) {
+            int r = registerMap.get(spillV);
+            registerMap.put(current,r);
+            registerMap.put(spillV,-1);
+            activeIntervals.remove(spillV);
+            activeIntervals.add(current);
+        }
+        return current;
     }
 
     @Override
@@ -152,7 +172,7 @@ public class LinearScanAllocator implements RegisterAllocator {
 
     @Override
     public void storeNew(String name) {
-        if(registerMap.containsKey(name)){
+        if(registerMap.containsKey(name)&& registerMap.get(name)!=-1){
             int i = registerMap.get(name);
             String reg = registers.get(i);
             AsmBuilder.op1("mv", reg , "t0");
@@ -166,11 +186,11 @@ public class LinearScanAllocator implements RegisterAllocator {
     @Override
     public void storeNew(String name1, String name2) {
         String reg1 = "t0";
-        if(!name1.equals("")&&registerMap.containsKey(name1)){
+        if(!name1.equals("")&&registerMap.containsKey(name1) && registerMap.get(name1)!=-1){
             int i = registerMap.get(name1);
             reg1 = registers.get(i);
         }
-        if(registerMap.containsKey(name2)){
+        if(registerMap.containsKey(name2)&& registerMap.get(name2)!=-1){
 
             String reg2 = "t1";
 
@@ -192,7 +212,7 @@ public class LinearScanAllocator implements RegisterAllocator {
 
     @Override
     public void loadNew(String name, int i) {
-        if(registerMap.containsKey(name)){
+        if(registerMap.containsKey(name)&& registerMap.get(name)!=-1){
 //            int i = registerMap.get(name);
 //            String reg = registers.get(i);
 //            AsmBuilder.op1("mv", reg , "t0");
@@ -211,11 +231,11 @@ public class LinearScanAllocator implements RegisterAllocator {
         String name2=LLVMGetValueName(LLVMGetOperand(inst, 1)).getString();
         String reg1 = "t0";
         String reg2 = "t1";
-        if(!name1.equals("")&&registerMap.containsKey(name1)){
+        if(!name1.equals("")&&registerMap.containsKey(name1)&& registerMap.get(name1)!=-1){
             int i = registerMap.get(name1);
             reg1 = registers.get(i);
         }
-        if(!name2.equals("")&&registerMap.containsKey(name2)) {
+        if(!name2.equals("")&&registerMap.containsKey(name2)&& registerMap.get(name2)!=-1) {
 
             int i = registerMap.get(name2);
             reg2 = registers.get(i);
@@ -232,7 +252,7 @@ public class LinearScanAllocator implements RegisterAllocator {
 
     @Override
     public void ret(String name) {
-        if(registerMap.containsKey(name)){
+        if(registerMap.containsKey(name)&& registerMap.get(name)!=-1){
             int i = registerMap.get(name);
             String reg = registers.get(i);
             AsmBuilder.op1("mv", "a0" , reg);
