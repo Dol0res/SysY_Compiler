@@ -45,7 +45,7 @@ public class LinearScanAllocator implements RegisterAllocator {
         // 将活跃区间按照开始位置排序
         // Step 1: Sort intervals by start position
         List<HashMap.Entry<String, Interval>> sortedIntervals = new ArrayList<>(variableIntervals.entrySet());
-        sortedIntervals.sort(Comparator.comparingInt(e -> e.getValue().end));
+        sortedIntervals.sort(Comparator.comparingInt(e -> e.getValue().start));
 
         // Step 2: Track active intervals
 
@@ -73,6 +73,7 @@ public class LinearScanAllocator implements RegisterAllocator {
                 stackSize+=4;
             }else {
                 activeIntervals.add(variable);
+                activeIntervals.sort(Comparator.comparingInt(e ->variableIntervals.get(e).end ));
             }
 
             // Step 5: Add current interval to active intervals
@@ -104,7 +105,7 @@ public class LinearScanAllocator implements RegisterAllocator {
         }
     }
     private String spillAtInterval(String current) {
-        String spillV = activeIntervals.get((activeIntervals.size()));
+        String spillV = activeIntervals.get((activeIntervals.size()-1));
         Interval spillI = variableIntervals.get(spillV);
         Interval cI = variableIntervals.get(current);
         if (cI.end > spillI.end) {
