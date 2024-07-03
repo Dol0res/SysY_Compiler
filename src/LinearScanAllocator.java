@@ -15,7 +15,7 @@ public class LinearScanAllocator implements RegisterAllocator {
     private HashMap<String, Integer> stackMap= new HashMap<>();
     HashMap<String, Interval> variableIntervals = new HashMap<>();
     //List<String> variables=new ArrayList<>();
-    private static final int regNum = 0;
+    private static final int regNum = 1;
     private static class Interval {
         int start;
         int end;
@@ -165,14 +165,16 @@ public class LinearScanAllocator implements RegisterAllocator {
 
     @Override
     public void storeNew(String name1, String name2) {
+        String reg1 = "t0";
+        if(!name1.equals("")&&registerMap.containsKey(name1)){
+            int i = registerMap.get(name1);
+            reg1 = registers.get(i);
+        }
         if(registerMap.containsKey(name2)){
-            String reg1 = "t0";
+
             String reg2 = "t1";
-            if(!name1.equals("")&&registerMap.containsKey(name1)){
-                int i = registerMap.get(name1);
-                reg1 = registers.get(i);
-            }
-            if(!name2.equals("")&&registerMap.containsKey(name2)) {
+
+            if(!name2.equals("")) {
 
                 int i = registerMap.get(name2);
                 reg2 = registers.get(i);
@@ -182,7 +184,7 @@ public class LinearScanAllocator implements RegisterAllocator {
 
         }else{
             if(getStack(name2)==-1) allocate(name2);
-            AsmBuilder.op1("sw", "t0" , getStack(name2) + "(sp)");
+            AsmBuilder.op1("sw", reg1 , getStack(name2) + "(sp)");
         }
         //todo: name12?
         //todo: getstack
@@ -197,8 +199,7 @@ public class LinearScanAllocator implements RegisterAllocator {
 
         }else{
             if(getStack(name)==-1) allocate(name);
-            boolean f = AsmBuilder.op1("lw", "t" + String.valueOf(i), getStack(name) + "(sp)");
-            if(!f)stackSize+=4;
+            AsmBuilder.op1("lw", "t" + String.valueOf(i), getStack(name) + "(sp)");
         }
     }
 

@@ -1,34 +1,8 @@
-int x = 1;
-int y = 2;
-int z = 3;
-int a = 4;
-
-
-
-int main() {
-    // Local variables
-    int x1 = 1;
-    int x2 = 2;
-    int x3 = 3;
-    int x4 = 4;
-
-
-
-    // Perform some operations on global variables
-    x = x + 1;
-    y = y + 2;
-    z = z + 3;
-    a = a + 4;
-
-
-
-    // Perform some operations on local variables
-    x1 = x1 * 2;
-    x2 = x2 * 2;
-    x3 = x3 * 2;
-    x4 = x4 * 2;
-
-
-
-    return x1 + x2 + x3 + x4 + x + y + z + a;
+const int a = 1;
+int b;
+int main(){
+    int c = 3;
+    b = c + a + 1;
+    const int d = 10;
+    return c + d;
 }

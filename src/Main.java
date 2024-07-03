@@ -27,14 +27,15 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         String srcPath = "tests/test1.sysy";
-        String destPath = "tests/output.txt";
+        String destPath = "tests/output2.txt";
+        String destPath2 = "tests/output.txt";
 
         if (args.length < 2) {
             System.err.println("input path is required");
             //return;
         } else {
             srcPath = args[0];
-            destPath = args[1];
+            destPath2 = args[1];
         }
 
         SysYLexer sysYLexer = lexer(srcPath);
@@ -156,7 +157,7 @@ public class Main {
             }
             //String asmCode = AsmBuilder.getAsmCode();
             //System.out.println(asmCode);
-            AsmBuilder.writeTo(destPath);
+            AsmBuilder.writeTo(destPath2);
 
         }
     }
