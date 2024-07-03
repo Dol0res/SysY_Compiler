@@ -94,7 +94,7 @@ public class LinearScanAllocator implements RegisterAllocator {
 
             String variable = iterator.next();
             Interval interval =  variableIntervals.get(variable);
-            if (interval.end < currentStart) {
+            if (interval.end <= currentStart) {
                 iterator.remove();
                 int r = registerMap.get(variable);
                 regIsAssigned[r] = false;
