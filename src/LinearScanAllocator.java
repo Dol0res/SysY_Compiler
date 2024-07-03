@@ -99,8 +99,6 @@ public class LinearScanAllocator implements RegisterAllocator {
                 int r = registerMap.get(variable);
                 regIsAssigned[r] = false;
                 //freeRegisters.add(interval.register);
-            } else {
-                break;
             }
         }
     }
